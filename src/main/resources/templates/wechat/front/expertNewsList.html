@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+#@layout_wechat()
+
+#define page_top_url()
+/wechat/front/index
+#end
+
+#define page_title()
+#(expert.peName)
+#end
+
+#define main()
+<body>
+    #@page_top2()
+    <input type="hidden" value="#(expert.peId)" id="expertId"/>
+    <input type="hidden" value="0" id="pageNum"/>
+    <div class="expert_bg">
+        <div class="expert_box">
+            <div class="flex-center">
+                <div class="pic">
+                    <img src="#(expert.peHeadPath??)" />
+                </div>
+                <div class="flex-item">
+                    <div class="name">
+                        #(expert.peName??)
+                    </div>
+                    <div class="hos">
+                        #(expert.peHospital??)
+                    </div>
+                    <div class="office">
+                        #(expert.peDept??) #(expert.peProfessional??)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="list_box latest_box">
+        <div class="list_cont" id="newsList">
+        </div>
+    </div>
+</body>
+#end
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        if(!$("#expertId").val()){
+            $("#newsList").append("<div style=\"margin-top: 22px; font-size: 16px; text-align: center\">查询失败，专题ID为空~</div>");
+        }else{
+            listData(1);
+        }
+    });
+
+    /**
+     * 滚动加载数据
+     * @param page
+     */
+    function listData(page) {
+        $.ajax({
+            type: "GET",
+            cache: false,
+            async: false,
+            dataType: "json",
+            url: '/wechat/expert/listExpertNewsAjax',
+            data: {
+                rowsPerPage: 10,
+                page: page,
+                expertId:$("#expertId").val(),
+            },
+            success: function (json) {
+                if(page == 1){
+                    $("#newsList").empty();
+                }
+                if (json.data != null && json.data.records != null && json.data.records.length > 0) {
+                    $("#newsList").append(createHtml(json.data));
+                }else{
+                    $("#loadMore").hide();
+                    if(page == 1){
+                        $("#newsList").empty();
+                        $("#newsList").append("<div style=\"margin-top: 22px; font-size: 16px; text-align: center\">暂无数据~</div>");
+                    }
+                }
+            }
+        });
+    }
+
+    function createHtml(data) {
+        $("#pageNum").val(data.current);
+        var html = "";
+        for (var i = 0; i < data.records.length; i++) {
+            var item = data.records[i];
+            html = html + '<a href="/wechat/news/getNewsById?newsId='+item.neId+'" class="list_block">';
+                html = html + '<div class="flex-box">';
+                    html = html + '<div class="pic">';
+                        html = html + '<img src="'+item.neThumbnailPath+'"/>';
+                    html = html + '</div>';
+                    html = html + '<div class="flex-item">';
+                        html = html + '<div class="overflow-two tit">'+item.neTitle+'</div>';
+                        html = html + '<div class="read_infor">';
+                            html = html + '<div class="flex-box">';
+                                html = html + '<div class="flex-item">';
+                                    html = html + '<span class="time">'+ item.nePublishDateStr+'</span>';
+                                html = html + '</div>';
+                                html = html + '<div class="flex-item">';
+                                    html = html + '<span class="read">'+ item.neHits+'</span>';
+                                html = html + '</div>';
+                            html = html + '</div>';
+                        html = html + '</div>';
+                    html = html + '</div>';
+                html = html + '</div>';
+            html = html + '</a>';
+        }
+        return html;
+    }
+
+    var timer = null;
+    $(window).scroll(function () {
+        $windHeight = (window.outerHeight > $(window).height()) ? window.outerHeight : $(window).height();
+        if ($(this).scrollTop() + $windHeight +30 >= $(document).height()) {
+            //防止滚动过快，服务端没来得及响应造成多次请求标记 debounce/
+            if (typeof timer === 'number') {
+                clearTimeout(timer);
+            }
+            timer = setTimeout(function () {
+                alert($('#pageNum').val());
+                var page = parseInt($('#pageNum').val()) + 1;
+                listData(page);
+            }, 400);
+        }
+    });
+</script>

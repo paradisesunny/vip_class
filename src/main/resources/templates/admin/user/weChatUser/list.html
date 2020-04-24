@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+#@layout_admin()
+
+#define title()
+<title>安斯泰来智能平台</title>
+#end
+#define main()
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    #include("../../include/head.html",navId="nav_user", subNavId="nav_user_wechat")
+    <div class="layui-body" style="top:50px">
+        <table class="layui-hide" lay-filter="dataTale" id="item"></table>
+    </div>
+</div>
+<script type="text/html" id="toolbarDemo">
+    <form action="admin/weChatUser/list" class="layui-form layui-col-md12 x-so" name="searchForm" id="searchForm"
+          method="post">
+        <span style="font-size: 18px;margin-right: 10px">微信用户</span>
+        <div class="layui-input-inline">
+            <input type="text" id="keyword" name="keyword" value="" class="form-control" style="height: 30px"
+                   placeholder="昵称"/>
+        </div>
+        <button type="button" id="search" class="layui-btn layui-btn-sm" lay-submit
+                lay-filter="search"><i class="layui-icon">&#xe615;</i>
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm" onclick="exportData()">导出</button>
+    </form>
+</script>
+<script>
+    function exportData() {
+        var word = $("#keyword").val();
+        window.open('/admin/weChatUser/export?keyword=' + word);
+    }
+
+    layui.use(['table', 'form', 'util'], function () {
+        var table = layui.table;
+        var form = layui.form;
+        var util = layui.util;
+        table.render({
+            id: "tableReload"
+            , elem: '#item'
+            , url: '/admin/weChatUser/listAjax'
+            , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+            , defaultToolbar: {}
+            , page: {
+                theme: '#5762A4'
+            }
+            , autoSort: false
+            , loading: false
+            , cols: [[
+                {
+                    title: '序号', width: 90, fixed: true, align: 'center', templet: function (d) {
+                        return d.LAY_INDEX;
+                    }
+                }
+                , {field: 'wuNickname', width: 120, title: '昵称', align: 'center', sort: true}
+                , {field: 'wuSex', width: 120, title: '性别', align: 'center', sort: true}
+                , {field: 'wuCity', width: 120, title: '城市', align: 'center', sort: true}
+                , {field: 'wuSource', width: 120, title: '来源', align: 'center', sort: true}
+                , {field: 'wuSubscribe', width: 120, title: '是否订阅', align: 'center', sort: true}
+                , {
+                    field: 'wuSubscribeTime', width: 120, title: '关注时间', align: 'center', sort: true,
+                    templet: function (d) {
+                        if (d.wuSubscribeTime) {
+                            return util.toDateString(d.wuSubscribeTime, 'yyyy-MM-dd');
+                        } else {
+                            return '';
+                        }
+                    }
+                },
+            ]]
+        });
+        //监听排序事件
+        table.on('sort(dataTale)', function (obj) {
+            table.reload('tableReload', {
+                initSort: obj //记录初始排序，如果不设的话，将无法标记表头的排序状态。
+                , where: { //请求参数（注意：这里面的参数可任意定义，并非下面固定的格式）
+                    field: obj.field //排序字段
+                    , order: obj.type //排序方式
+                }
+            });
+        });
+        //查询
+        form.on('submit(search)', function (data) {
+            var formData = data.field;
+            console.debug(formData);
+            var searchWord = formData.keyword;
+            table.reload('tableReload', {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: {
+                    keyword: searchWord
+                },
+                method: 'get',
+                url: '/admin/weChatUser/listAjax',
+            });
+            $("#keyword").val(searchWord);
+            return false;
+        });
+    });
+</script>
+</body>
+#end

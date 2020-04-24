@@ -1,0 +1,228 @@
+#define layout()
+<html lang="en">
+<head>
+    <base href="/"/>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    #@title?()
+    <script type="text/javascript" src="libs/jquery-3.4.1.min.js"></script>
+    #@css?()
+    #@js?()
+</head>
+<!--body包进main里面-->
+#@main?()
+</html>
+#end
+
+#define layout_admin()
+<html lang="en">
+<head>
+    <base href="/"/>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    #@title?()
+    <script type="text/javascript" src="libs/jquery-3.4.1.min.js"></script>
+
+    <!--layUI-->
+    <script type="text/javascript" src="libs/layui/layui.js"></script>
+    <link rel="stylesheet" href="libs/layui/css/layui.css"/>
+
+    <!-- UEditor -->
+    <style>
+        .edui-button.edui-for-135editor .edui-button-wrap .edui-button-body .edui-icon {
+            background-image: url("http://static.135editor.com/img/icons/editor-135-icon.png") !important;
+            background-size: 85%;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .edui-button.edui-for-xiumi-connect .edui-button-wrap .edui-button-body .edui-icon {
+            background-image: url("http://xiumi.us/connect/ue/xiumi-connect-icon.png") !important;
+            background-size: contain;
+        }
+    </style>
+    <!-- 配置文件 -->
+    <script type="text/javascript" src="libs/ueditor/ueditor.config.js"></script>
+    <!-- 编辑器源码文件 -->
+    <script type="text/javascript" src="libs/ueditor/ueditor.all.js"></script>
+    <script type="text/javascript" src="libs/ueditor/lang/zh-cn/zh-cn.js"></script>
+    <script type="text/javascript" src="libs/ueditor/plugins/135editor.js"></script>
+    <script type="text/javascript" src="libs/ueditor/plugins/xiumi-ue-dialog-v5.js"></script>
+    #@css?()
+    #@js?()
+</head>
+<!--body包进main里面-->
+#@main?()
+</html>
+#end
+
+#define layout_wechat()
+<html lang="en">
+<head>
+    <base href="/"/>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>探泌新天地</title>
+    <script src="res/js/jquery-3.0.0.min.js"></script>
+    <script src="res/js/base.js"></script>
+    <script src="res/libs/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+
+    <link rel="stylesheet" href="res/libs/css/mui.min.css">
+    <link rel="stylesheet" href="res/css/reset.css">
+    <link rel="stylesheet" href="res/css/index.css?v=20200409">
+
+    <!--倒计时-->
+    <script src="res/js/countDown.js?v=2020040716"></script>
+
+    <!--省级联动-->
+    <link rel="stylesheet" href="res/libs/css/mui.picker.css">
+    <link rel="stylesheet" href="res/libs/css/mui.poppicker.css">
+    <link rel="stylesheet" href="res/libs/css/mui.dtpicker.css">
+
+    <script src="res/libs/js/mui.picker.js"></script>
+    <script src="res/libs/js/mui.poppicker.js"></script>
+    <script src="res/libs/js/mui.dtpicker.js"></script>
+    <script src="res/libs/js/city.data.js"></script>
+    <script src="res/libs/js/city.data-3.js"></script>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script src="js/wechat/share.js?v=20200402"></script>
+    <script src="js/wechat/score.js?v=20200402"></script>
+    #@css?()
+    #@js?()
+</head>
+<!--body包进main里面-->
+#@main?()
+</html>
+#end
+
+
+#define page_top()
+<div class="page_top">
+    #if(isIndex == null || !isIndex)
+    <a href="javascript:void(0);" class="back" id="goBack"></a>
+    #end
+    <div>#@page_title?()</div>
+    <a href="/wechat/userCenter/center" class="user"></a>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#goBack").click(function () {
+            self.location = document.referrer;
+        });
+    })
+</script>
+#end
+
+#define page_top2()
+<div class="page_top">
+    #if(isIndex == null || !isIndex)
+    <a href="#@page_top_url?()" class="back"></a>
+    #end
+    <div>#@page_title?()</div>
+    <a href="/wechat/userCenter/center" class="user"></a>
+</div>
+#end
+
+#define reg_login_top()
+<div class="page_top">
+    #if(isIndex == null || !isIndex)
+    <a href="javascript:void(0);" class="back" id="goBack"></a>
+    #end
+    <div>#@page_title?()</div>
+    #if(goToReg == null || goToReg)
+    <a href="/wechat/userLogin/toRegister" class="a_text">去注册</a>
+    #else
+    <a href="/wechat/userLogin/doLogin" class="a_text">去登录</a>
+    #end
+</div>
+<script>
+    $(document).ready(function () {
+        $("#goBack").click(function () {
+            self.location = document.referrer;
+        });
+    })
+</script>
+#end
+
+<!--加分项-->
+#define scoreRule()
+<div>
+    <input type="hidden" value="#(com.kingyee.prad.common.ScoreRuleConst::NEWS_READ)" id="news_read"/>
+    <input type="hidden" value="#(com.kingyee.prad.common.ScoreRuleConst::NEWS_LIKE)" id="news_like"/>
+    <input type="hidden" value="#(com.kingyee.prad.common.ScoreRuleConst::NEWS_COMMENT)" id="news_comment"/>
+    <input type="hidden" value="#(com.kingyee.prad.common.ScoreRuleConst::NEWS_BOOK)" id="news_book"/>
+    <input type="hidden" value="#(com.kingyee.prad.common.ScoreRuleConst::NEWS_SHARE)" id="news_share"/>
+    <input type="hidden" value="#(com.kingyee.prad.common.ScoreRuleConst::WATCH_VIDEO)" id="watch_video"/>
+</div>
+#end
+
+
+
+#define reg_login_top_css()
+<style>
+    .page_top .a_text {
+        /*background: url(../images/user.png) no-repeat center center;*/
+        /*-webkit-background-size: 0.37rem 0.37rem;*/
+        /*height: 0.8rem;*/
+        /*width: 0.96rem;*/
+        display: block;
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-size: 14px;
+        margin-right: 10px;
+    }
+</style>
+#end
+
+
+
+
+#define medlive_login_css()
+<style>
+    .login-titles {
+        -webkit-display: flex;
+        -moz-display: flex;
+        -ms-display: flex;
+        -o-display: flex;
+        -khtml-display: flex;
+        display: flex;
+        align-items: center;
+        margin: 23px 7.25% 0;
+        font-size: 12px;
+        color: #666;
+    }
+    .login-titles-left, .login-titles-right {
+        -webkit-flex: 1;
+        -moz-flex: 1;
+        -ms-flex: 1;
+        -o-flex: 1;
+        -khtml-flex: 1;
+        flex: 1;
+        width: 100%;
+        height: 1px;
+        background: #EFEFEF;
+    }
+    .login-goEmt {
+        width: 45px;
+        height: 45px;
+        display: block;
+        margin: 0 auto 0;
+        background: url("res/images/medliveLogin.png") center no-repeat;
+        background-size: 100% 100%;
+        margin-top: 12px;
+    }
+    .login-goEmt-desc {
+        font-size: 12px;
+        color: #666;
+        text-align: center;
+        margin-top: 9px;
+    }
+</style>
+#end

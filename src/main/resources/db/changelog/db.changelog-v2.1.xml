@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="V2.1.0" author="zhl">
+        <comment>用户扫码记录添加字段</comment>
+        <addColumn tableName="pr_scan">
+            <column name="sc_event" type="varchar(32)" remarks="事件类型(subscribe/SCAN)"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

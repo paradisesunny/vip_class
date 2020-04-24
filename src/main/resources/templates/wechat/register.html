@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+#@layout_wechat()
+
+
+    <!--<link href="libs/awesomplete/awesomplete.css" rel="stylesheet">
+    <script type="text/javascript" src="libs/awesomplete/awesomplete.js"></script>-->
+    <script type="text/javascript" src="js/wechat/userInfo.js?v=202004071"></script>
+
+#@reg_login_top_css()
+
+#define page_title()
+注册
+#end
+
+#define main()
+<body>
+    #@reg_login_top()
+    <div class="register_box">
+        <div class="register_line">
+            <div class="flex-center">
+                <div class="flex-item">
+                    <input class="txt" type="text" placeholder="请输入姓名" id="puName" name="puName"/>
+                </div>
+            </div>
+        </div>
+        <div class="register_line">
+            <div class="flex-center">
+                <div class="flex-item">
+                    <input id="address" class="sele" type="text" placeholder="请选择地址" name="address"/>
+                    <input id="puProvince" type="hidden" name="puProvince"/>
+                    <input id="puCity" type="hidden" name="puCity"/>
+                    <input id="puRegion" type="hidden" name="puRegion"/>
+                    <input id="puProvinceId" type="hidden" name="puProvinceId"/>
+                    <input id="puCityId" type="hidden" name="puCityId"/>
+                    <input id="puRegionId" type="hidden" name="puRegionId"/>
+                </div>
+            </div>
+        </div>
+        <div class="register_line">
+            <div class="flex-center">
+                <div class="flex-item">
+                    <input class="txt" type="text" placeholder="请输入医院" id="puHospital" name="puHospital" />
+                    <!--data-list="北京大学,清华大学"-->
+                </div>
+            </div>
+        </div>
+        <div class="register_line">
+            <div class="flex-center">
+                <div class="flex-item">
+                    <input id="keshi" data-keshivalue="" class="sele" type="text" placeholder="请选择科室" name="puDept" value=""/>
+                </div>
+            </div>
+        </div>
+        <div class="register_line">
+            <div class="flex-center">
+                <div class="flex-item">
+                    <input id="zhicheng" data-zhichengvalue="" class="sele" type="text" placeholder="请选择职称" name="puProfessional"/>
+                </div>
+            </div>
+        </div>
+        <div class="register_line">
+            <div class="flex-center">
+                <div class="flex-item">
+                    <input class="txt" type="text" placeholder="请输入手机号" id="puPhone" name="puPhone"/>
+                </div>
+            </div>
+        </div>
+        <div class="register_line">
+            <div class="flex-box">
+                <div class="flex-item">
+                    <input class="txt" type="text" placeholder="请输入验证码" id="code" name="code"/>
+                </div>
+                <div class="code_block">
+                    <button class="code_btn" type="button" onclick="getCodeButton('code_btn')">获取验证码</button>
+                </div>
+            </div>
+        </div>
+        <div class="register_line">
+            <div class="flex-center">
+                <div class="agree_block">
+                    <input class="agree_check" type="checkbox" id="acceptCheck"/>
+                </div>
+                <div class="flex-item">
+                    接受探泌新天地平台<a href="/wechat/userLogin/userConsent" class="red">《用户知情同意书》</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="btn_box">
+        <button class="btn" type="button" onclick="doRegister()">下一步</button>
+    </div>
+</body>
+
+
+
+<script type="text/javascript">
+    (function($, doc) {
+        $.init();
+        $.ready(function() {
+            /**
+             * 获取对象属性的值
+             * 主要用于过滤三级联动中，可能出现的最低级的数据不存在的情况，实际开发中需要注意这一点；
+             * @param {Object} obj 对象
+             * @param {String} param 属性名
+             */
+            var _getParam = function(obj, param) {
+                return obj[param] || '';
+            };
+            var cityPicker3 = new $.PopPicker({
+                layer: 3
+            });
+            cityPicker3.setData(cityData3);
+            var showCityPickerButton = doc.getElementById('address');
+            var cityResult3 = doc.getElementById('address');
+            showCityPickerButton.addEventListener('tap', function(event) {
+                cityPicker3.show(function(items) {
+                    cityResult3.value = items[0].text + items[1].text + items[2].text;
+
+                    var province = doc.getElementById('puProvince');
+                    var puProvinceId = doc.getElementById('puProvinceId');
+                    province.value = items[0].text;
+                    puProvinceId.value = items[0].value;
+                    var puCity = doc.getElementById('puCity');
+                    var puCityId = doc.getElementById('puCityId');
+                    puCity.value = items[1].text;
+                    puCityId.value = items[1].value;
+                    var puRegion = doc.getElementById('puRegion');
+                    var puRegionId = doc.getElementById('puRegionId');
+                    puRegion.value = items[2].text;
+                    puRegionId.value = items[2].value;
+
+                    //查询医院
+
+
+
+
+                    //返回 false 可以阻止选择框的关闭
+                    //return false;
+                });
+            }, false);
+
+
+            //选择科室
+            var keshiPicker = new $.PopPicker();
+            keshiPicker.setData([{
+                value: '01',
+                text: '泌尿外科'
+            }, {
+                value: '02',
+                text: '内分泌科'
+            }, {
+                value: '03',
+                text: '肾内科'
+            }, {
+                value: '04',
+                text: '感染科'
+            }, {
+                value: '05',
+                text: '呼吸科'
+            }, {
+                value: '06',
+                text: '消化科'
+            },{
+                value: '07',
+                text: '心血管内科'
+            }, {
+                value: '08',
+                text: '其他'
+            }]);
+            var showKeShiPicker = doc.getElementById('keshi');
+            var keshiResult = doc.getElementById('keshi');
+            showKeShiPicker.addEventListener('tap', function(event) {
+                // var oldValue = keshiResult.dataset.keshivalue;
+                // console.log("旧的值："+oldValue);
+                // if (oldValue != '') {
+                //     keshiPicker.pickers[0].setSelectedValue(oldValue, 200);  //设置初始值。
+                // }
+                keshiPicker.show(function(items) {
+                    console.log(items[0].text);
+                    keshiResult.value = items[0].text;
+                    // keshiResult.dataset.keshivalue = items[0].value;
+                    //返回 false 可以阻止选择框的关闭
+                    //return false;
+                });
+            }, false);
+
+            //选择职称
+            var zhichengPicker = new $.PopPicker();
+            zhichengPicker.setData([{
+                value: '01',
+                text: '住院医师'
+            }, {
+                value: '02',
+                text: '主治医师'
+            }, {
+                value: '03',
+                text: '副主任医师'
+            }, {
+                value: '04',
+                text: '主任医师'
+            }, {
+                value: '05',
+                text: '其他'
+            }]);
+            var showZhiChengPickerPicker = doc.getElementById('zhicheng');
+            var zhichengResult = doc.getElementById('zhicheng');
+            showZhiChengPickerPicker.addEventListener('tap', function(event) {
+                /*var oldValue = zhichengResult.dataset.zhichengvalue;
+                console.log("旧的值："+oldValue);
+                if (oldValue != '') {
+                    zhichengPicker.pickers[0].setSelectedValue(oldValue, 200);  //设置初始值。
+                }*/
+                zhichengPicker.show(function(items) {
+                    console.log(items[0].value);
+                    zhichengResult.value = items[0].text;
+                    // zhichengResult.dataset.zhichengvalue = items[0].value;
+
+                    //返回 false 可以阻止选择框的关闭
+                    //return false;
+                });
+            }, false);
+        });
+    })(mui, document);
+
+    //获取验证码
+    function getCodeButton(value){
+        var code = $('.'+value);
+        if(!code.attr("disabled")){
+            $.ajax({
+                url: "/common/sendCode",
+                type: "post",
+                cache: false,
+                dataType: "json",
+                data: {
+                    mobile: $("#puPhone").val(),
+                    type: "mobile_register"
+                },
+                success: function (json) {
+                    if (json.success) {
+                        alert("验证码发送成功")
+                        code.attr("disabled","disabled");
+                        var time = 60;
+                        var set=setInterval(function(){
+                            code.html(--time+" s");
+                        }, 1000);
+
+                        setTimeout(function(){
+                            code.attr("disabled",false).html("重新获取");
+                            clearInterval(set);
+                        }, 60000);
+                    } else {
+                        alert(json.msg)
+                    }
+                }
+            })
+        }
+    }
+
+
+    $(".userPhone").click(function () {
+        $(this).parent().siblings().find('input').blur();
+    });
+
+    /*var awesomplete;
+    $(document).ready(function () {
+        var inputH = document.getElementById("puHospital");
+        awesomplete = new Awesomplete(inputH, {
+            minChars: 1,
+            maxItems: 10
+        });
+    })*/
+
+    function initHospital() {
+        ajax({
+            type: "post",
+            cache: false,
+            dataType: "json",
+            url: "/wechat/userLogin/getHospital",
+            data: {
+                provinces: $("#city-picker").val()
+            },
+            success: function (json) {
+                if (!json.success) {
+                    alert(json.msg);
+                } else {
+                    // awesomplete.list = json.data;
+                }
+            }
+        });
+    }
+
+    function checkName() {
+        if (!$("#puName").val()) {
+            alert("请输入您的姓名")
+            return false
+        } else {
+            return true;
+        }
+    }
+    function checkProvinces() {
+        if (!$("#address").val()) {
+            alert("请选择地址")
+            return false
+        } else {
+            return true;
+        }
+    }
+
+    function checkHospital() {
+        if (!$("#puHospital").val()) {
+            alert("请输入医院")
+            return false
+        } else {
+            return true;
+        }
+    }
+
+    function checkDept() {
+        if (!$("#keshi").val()) {
+            alert("请选择所属科室")
+            return false
+        } else {
+            return true;
+        }
+    }
+
+    function checkProfessional() {
+        if (!$("#zhicheng").val()) {
+            alert("请选择您的职称")
+            return false
+        } else {
+            return true;
+        }
+    }
+
+    function checkTel() {
+        if ($("#puPhone").val() == null || $("#puPhone").val() == "") {
+            alert("请输入您的手机号")
+            return false
+        } else if (!(/^1[3456789]\d{9}$/.test($("#puPhone").val()))) {
+            alert("请输入正确的手机号码");
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    function checkCode() {
+        if ($("#code").val() == null || $("#code").val() == "") {
+            alert("请输入验证码")
+            return false
+        } else {
+            return true;
+        }
+    }
+
+    function checkAccept() {
+        if (!$('#acceptCheck').is(':checked')) {
+            alert("您还没有勾选知情同意书")
+            return false
+        } else {
+            return true;
+        }
+    }
+
+    function cancle() {
+        var ua = navigator.userAgent.toLowerCase();
+        if (ua.match(/MicroMessenger/i) == "micromessenger") {
+            WeixinJSBridge.call('closeWindow');
+        } else {
+            // window.opener = null;
+            // window.open('', '_self');
+            // window.close();
+            history.go(-1);
+        }
+    }
+    function doRegister() {
+        if (checkName() && checkProvinces() && checkHospital() &&
+            checkDept() && checkProfessional() && checkTel() && checkCode()  && checkAccept()) {
+            $.ajax({
+                url: "/wechat/userLogin/register",
+                type: "post",
+                cache: false,
+                dataType: "json",
+                data: {
+                    puName: $("#puName").val(),
+                    puProvince: $("#puProvince").val(),
+                    puCity: $("#puCity").val(),
+                    puRegion: $("#puRegion").val(),
+                    puProvinceId: $("#puProvinceId").val(),
+                    puCityId: $("#puCityId").val(),
+                    puRegionId: $("#puRegionId").val(),
+                    puHospital: $("#puHospital").val(),
+                    puDept: $("#keshi").val(),
+                    puProfessional: $("#zhicheng").val(),
+                    puPhone: $("#puPhone").val(),
+                    code: $("#code").val(),
+                },
+                success: function (json) {
+                    if (json.success) {
+                        // alert("注册成功");
+                        window.location.href="/wechat/front/index"
+                    } else {
+                        alert(json.msg)
+                        return false;
+                    }
+                }
+            })
+        }
+        return false;
+    }
+</script>
+#end

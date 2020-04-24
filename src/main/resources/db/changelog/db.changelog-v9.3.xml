@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="V9.3.0" author="dxl">
+        <comment>资讯加字段</comment>
+        <addColumn tableName="prad_news">
+            <column name="ne_end_date" type="bigint(20)" remarks="直播结束时间"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>
+

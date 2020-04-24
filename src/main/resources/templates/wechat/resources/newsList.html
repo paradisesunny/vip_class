@@ -1,0 +1,116 @@
+#@layout_wechat()
+#define page_title()
+#(title??)
+#end
+#define page_top_url()
+/wechat/front/index
+#end
+#define main()
+<body>
+#@page_top2()
+<input type="hidden" value="#(categoryId)" id="categoryId"/>
+<input type="hidden" value="#(title)" id="categoryName"/>
+<div class="list_box latest_box" id="newsList"></div>
+<script type="text/javascript" charset="utf-8">
+    var gallery = mui('.swiper_box .mui-slider');
+    gallery.slider({
+        interval: 1000//自动轮播周期，若为0则不自动播放，默认为0；
+    })
+</script>
+</body>
+#end
+#define js()
+<script type="text/javascript">
+    $(document).ready(function () {
+        listData(1);
+    });
+
+    /**
+     * 滚动加载数据
+     * @param page
+     */
+    function listData(page) {
+        var url = '/wechat/resources/listNewsAjax';
+        if($("#categoryName").val() && $("#categoryName").val() == "规范化课程"){
+            url = '/wechat/newsClass/listNewsAjax';
+        }
+        $.ajax({
+            type: "GET",
+            cache: false,
+            async: false,
+            dataType: "json",
+            url: url,
+            data: {
+                rowsPerPage: 10,
+                page: page,
+                categoryId: $('#categoryId').val()
+            },
+            success: function (json) {
+                if (page == 1) {
+                    $("#newsList").empty();
+                }
+                if (json.data != null && json.data.length > 0) {
+                    $("#newsList").append(createHtml(json.data));
+                } else {
+                    $("#loadMore").hide();
+                    if (page == 1) {
+                        $("#newsList").empty();
+                        $("#newsList").append("<div style=\"margin-top: 22px; font-size: 16px; text-align: center\">暂无数据~</div>");
+                    }
+                }
+            }
+        });
+    }
+
+    function createHtml(data) {
+        console.log(data)
+        $("#pageNum").val(data.current);
+        var html = "";
+        for (var i = 0; i < data.length; i++) {
+            var item = data[i];
+            html = html + '<div class="list_cont">';
+            html = html + '<a href="/wechat/resources/detail?pk=' + item.neId + '" class="list_block">'
+            html = html + '<div class="flex-box">'
+            html = html + '<div class="pic">'
+            if (item.neThumbnailPath != null) {
+                html = html + '<img src="' + item.neThumbnailPath + '"/>';
+            } else {
+                html = html + '<img src="res/images/pic01.png"/>';
+            }
+            html = html + '</div>';
+            html = html + '<div class="flex-item">';
+            html = html + '<div class="overflow-two tit">' + item.neTitle + '</div>';
+            html = html + '<div class="read_infor">';
+            html = html + '<div class="flex-box">';
+            html = html + '<div class="flex-item">';
+            html = html + '<span class="time">' + item.nePublishDateStr.split(' ')[0] + '</span>';
+            html = html + '</div>';
+            html = html + '<div class="flex-item">';
+            html = html + '<span class="read">' + item.neHits + '</span>';
+            html = html + '</div>';
+            html = html + '</div>';
+            html = html + '</div>';
+            html = html + '</div>';
+            html = html + '</div>';
+            html = html + '</a>';
+            html = html + '</div>';
+        }
+        return html;
+    }
+
+    var timer = null;
+    $(window).scroll(function () {
+        $windHeight = (window.outerHeight > $(window).height()) ? window.outerHeight : $(window).height();
+        if ($(this).scrollTop() + $windHeight + 30 >= $(document).height()) {
+            //防止滚动过快，服务端没来得及响应造成多次请求标记 debounce/
+            if (typeof timer === 'number') {
+                clearTimeout(timer);
+            }
+            timer = setTimeout(function () {
+                var page = parseInt($('#pageNum').val()) + 1;
+                listData(page);
+            }, 400);
+        }
+    });
+</script>
+#end

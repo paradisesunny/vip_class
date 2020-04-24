@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="V7.0.0" author="dxl">
+        <comment>用户表增加省份id,区县id,城市id</comment>
+        <addColumn tableName="prad_user">
+            <column name="pu_province_id" type="bigint" remarks="省份id"/>
+        </addColumn>
+        <addColumn tableName="prad_user">
+            <column name="pu_city_id" type="bigint" remarks="城市id"/>
+        </addColumn>
+        <addColumn tableName="prad_user">
+            <column name="pu_region_id" type="bigint" remarks="区县id"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>
+

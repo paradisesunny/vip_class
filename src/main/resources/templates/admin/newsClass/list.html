@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+#@layout_admin()
+
+#define title()
+<title>安斯泰来智能平台</title>
+#end
+
+#define main()
+<body class="layui-layout-body">
+
+<div class="layui-layout layui-layout-admin">
+    #include("../include/head.html",navId="nav_news", subNavId="nav_news_class")
+    <div class="layui-body" style="top:50px">
+        <table class="layui-hide" lay-filter="dataTale" id="item"></table>
+    </div>
+</div>
+<script type="text/html" id="toolbarDemo">
+    <form action="/admin/newsClass/listAjax" class="layui-form layui-col-md12 x-so" name="searchForm"
+          id="searchForm"
+          method="post">
+        <span style="font-size: 18px;margin-right: 10px">规范化课程列表</span>
+        <div class="layui-input-inline">
+            <input type="text" id="keyword" name="keyword" value="" class="form-control" style="height: 30px"
+                   placeholder="标题"/>
+        </div>
+        <button type="button" id="search" class="layui-btn layui-btn-sm" lay-submit lay-filter="search"><i
+                class="layui-icon">&#xe615;</i>
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm"
+                onclick="javascript:window.location.href='/admin/newsClass/edit'">添加
+        </button>
+    </form>
+</script>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs"
+       onclick="javascript:window.location.href='/admin/newsClass/edit?newsId={{ d.neId }}'">编辑</a>
+<!--    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>-->
+</script>
+<script>
+    layui.use(['table', 'form', 'util'], function () {
+        var table = layui.table;
+        var form = layui.form;
+        var util = layui.util;
+        table.render({
+            id: "tableReload"
+            , elem: '#item'
+            , url: '/admin/newsClass/listAjax'
+            , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+            , defaultToolbar: {}
+            , page: {
+                theme: '#5762A4'
+            }
+            , autoSort: false
+            , loading: false
+            , cols: [[
+                {
+                    title: '序号', width: 90, fixed: true, align: 'center', templet: function (d) {
+                        return d.LAY_INDEX;
+                    }
+                }
+                , {field: 'neTitle', width: 110, title: '标题', align: 'center'}
+                , {
+                    field: 'neDate', width: 110, title: '发布时间', align: 'center', sort: true,
+                    templet: function (d) {
+                        if (d.neDate) {
+                            return util.toDateString(d.neDate, 'yyyy-MM-dd');
+                        } else {
+                            return '';
+                        }
+                    }
+                }
+                , {
+                    field: 'neIsCarousel', width: 110, title: '轮播图', align: 'center',
+                    templet: function (d) {
+                        if (d.neIsCarousel == 1) {
+                            return '<input type="checkbox" lay-skin="switch" lay-text="显示|不显示" checked> ';
+                        } else {
+                            return '<input type="checkbox" lay-skin="switch" lay-text="显示|不显示"> ';
+                        }
+                    }, event: 'changeStateOne'
+                }
+                , {
+                    field: 'neIsValid', width: 110, title: '激活态', align: 'center',
+                    templet: function (d) {
+                        if (d.neIsValid == 1) {
+                            return '<input type="checkbox" lay-skin="switch" lay-text="激活|未激活" checked> ';
+                        } else {
+                            return '<input type="checkbox" lay-skin="switch" lay-text="激活|未激活"> ';
+                        }
+                    }, event: 'changeStateThree'
+                }
+                , {
+                    field: 'neCreateTime', width: 120, title: '创建时间', align: 'center', sort: true,
+                    templet: function (d) {
+                        if (d.neCreateTime) {
+                            return util.toDateString(d.neCreateTime, 'yyyy-MM-dd');
+                        } else {
+                            return '';
+                        }
+                    }
+                }
+                , {
+                    field: 'neUpdateTime', width: 120, title: '更新时间', align: 'center', sort: true,
+                    templet: function (d) {
+                        if (d.neUpdateTime) {
+                            return util.toDateString(d.neUpdateTime, 'yyyy-MM-dd');
+                        } else {
+                            return '';
+                        }
+                    }
+                }, {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 120}
+            ]],
+        });
+        //监听排序事件
+        table.on('sort(dataTale)', function (obj) {
+            table.reload('tableReload', {
+                initSort: obj //记录初始排序，如果不设的话，将无法标记表头的排序状态。
+                , where: { //请求参数（注意：这里面的参数可任意定义，并非下面固定的格式）
+                    field: obj.field //排序字段
+                    , order: obj.type //排序方式
+                }
+            });
+        });
+        //查询
+        form.on('submit(search)', function (data) {
+            var formData = data.field;
+            var title = formData.keyword;
+            table.reload('tableReload', {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: {
+                    keyword: title
+                },
+                method: 'get',
+                url: '/admin/newsClass/listAjax',
+            });
+            $("#keyword").val(title);
+            return false;
+        });
+
+        //监听行工具事件
+        table.on('tool(dataTale)', function (obj) {
+            var data = obj.data;
+            var changeTo = null;
+            if (obj.event === 'del') {
+                layer.confirm('确定删除主键为[' + data.neId + ']的这条记录么', function (index) {
+                    $.ajax({
+                        type: "get",
+                        url: "/admin/newsClass/delete",
+                        data: {
+                            pk: data.neId,//此处是根据id查询此id是否被删除，故将id传向后端
+                        },
+                        success: function (ev) {
+                            if (ev.success) {
+                                obj.del();
+                                layer.close(index);
+                                layer.msg('删除成功', {icon: 1}, {time: 2000});
+                                window.location.reload()
+                            } else {
+                                layer.msg('连接网络失败，请检查网络设置或联系管理员', {icon: 2}, {time: 2000});
+                            }
+                        }
+
+                    });
+                });
+            }
+            // switch改变状态:
+            //改变轮播图展示与否
+            if (obj.event === 'changeStateOne') {
+                if (data.neIsCarousel == 1) {
+                    changeTo = 0;
+                } else {
+                    changeTo = 1;
+                }
+                $.ajax({
+                    type: "get",
+                    url: "/admin/newsClass/changeState",
+                    data: {
+                        pk: data.neId,
+                        carousel: changeTo,
+                    },
+                    success: function (ev) {
+                        if (ev.success) {
+                            layer.msg('状态修改成功');
+                        } else {
+                            layer.msg('连接网络失败，请检查网络设置或联系管理员', {icon: 2}, {time: 2000});
+                        }
+                    }
+                });
+            }
+            // 改变是否为头图
+            if (obj.event === 'changeStateTwo') {
+                if (data.neIsBanner == 1) {
+                    changeTo = 0;
+                } else {
+                    changeTo = 1;
+                }
+                $.ajax({
+                    type: "get",
+                    url: "/admin/newsClass/changeState",
+                    data: {
+                        pk: data.neId,
+                        banner: changeTo,
+                    },
+                    success: function (ev) {
+                        if (ev.success) {
+                            layer.msg('状态修改成功');
+                        } else {
+                            layer.msg('连接网络失败，请检查网络设置或联系管理员', {icon: 2}, {time: 2000});
+                        }
+                    }
+                });
+            }
+            //改变激活状态
+            if (obj.event === 'changeStateThree') {
+                if (data.neIsValid == 1) {
+                    changeTo = 0;
+                } else {
+                    changeTo = 1;
+                }
+                $.ajax({
+                    type: "get",
+                    url: "/admin/newsClass/changeState",
+                    data: {
+                        pk: data.neId,
+                        valid: changeTo,
+                    },
+                    success: function (ev) {
+                        if (ev.success) {
+                            window.location.reload()
+                            layer.msg('状态修改成功');
+                        } else {
+                            layer.msg('连接网络失败，请检查网络设置或联系管理员', {icon: 2}, {time: 2000});
+                        }
+                    }
+                });
+            }
+        });
+    });
+</script>
+</body>
+#end

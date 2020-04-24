@@ -1,0 +1,72 @@
+<div class="layui-header" style="background-color: rgba(0, 150, 136,1);">
+    <div class="layui-logo" style="width: 400px">
+        <div style="width: 300px;font-size: 24px;color: #fff;">安斯泰来智能平台</div>
+    </div>
+
+    <ul class="layui-nav layui-layout-right">
+        <li class="layui-nav-item">
+            <a href="/admin/sysUser/edit?id=1">
+                欢迎：#(com.kingyee.prad.common.security.AdminUserUtil::getShowName())
+            </a>
+        </li>
+        <li class="layui-nav-item"><a href="/admin/logout">退出</a></li>
+    </ul>
+
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                <li id="nav_user" class="layui-nav-item">
+                    <a href="javascript:;">用户管理</a>
+                    <dl class="layui-nav-child">
+                        <dd id="nav_user_sys"><a href="/admin/sysUser/list">系统用户</a></dd>
+                        <dd id="nav_user_wechat"><a href="/admin/weChatUser/list">微信用户</a></dd>
+                        <dd id="nav_user_reg"><a href="/admin/regUser/list">注册用户</a></dd>
+                    </dl>
+                </li>
+                <li id="nav_news" class="layui-nav-item">
+                    <a href="javascript:;">内容管理</a>
+                    <dl class="layui-nav-child">
+                        <dd id="nav_news_front"><a href="admin/front/news/list">前沿进展</a></dd>
+                        <dd id="nav_news_resources"><a href="/admin/resources/news/list">MDT甄选</a></dd>
+                        <dd id="nav_news_class"><a href="/admin/newsClass/list">规范化课程</a></dd>
+                        <dd id="nav_news_expert"><a href="admin/expert/list">专家管理</a></dd>
+                        <dd id="nav_news_cate"><a href="admin/newsCate/index?type=0">分类管理</a></dd>
+                        <dd id="nav_news_label"><a href="admin/newsCate/index?type=1">标签管理</a></dd>
+                    </dl>
+                </li>
+                <li id="nav_score" class="layui-nav-item">
+                    <a href="javascript:;">积分管理</a>
+                    <dl class="layui-nav-child">
+                        <dd id="nav_score_rule" ><a href="/admin/score/listRule">积分规则</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <dd id="nav_access_log" class=""><a href="/admin/visitLog/list">访问记录</a></dd>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+#set(navId = navId??"")
+#set(subNavId = subNavId??"")
+<script>
+    //注意：导航 依赖 element 模块，否则无法进行功能性操作
+    layui.use('element', function () {
+        var element = layui.element;
+    });
+
+    //设置选中状态
+    var navId = "#(navId)";
+    var subNavId = "#(subNavId)";
+    //选中状态
+    if(navId){
+        $("#" + navId).addClass("layui-nav-itemed");
+        $("#" + navId).parent().siblings().children().removeClass("layui-nav-itemed");
+    }
+    if(subNavId){
+        $("#" + subNavId).addClass("layui-this");
+    }
+</script>

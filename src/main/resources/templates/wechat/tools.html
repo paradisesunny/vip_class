@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+#@layout_wechat()
+
+#define page_top_url()
+/wechat/front/index
+#end
+
+#define page_title()
+医学工具
+#end
+
+#define main()
+<body>
+    #@page_top2()
+    <div class="tit_box">
+        <div class="flex-box">
+            <div class="flex-item">
+                <div class="tit">
+                    临床工具
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tools_box">
+        <div class="flex-center">
+            <div class="flex-item">
+                <a href="/wechat/tools/guide" class="tool_block" id="guide">
+                    <div class="flex-center">
+                        <div class="pic">
+                            <img src="res/images/logo1.png" />
+                        </div>
+                        <div class="flex-item">
+                            临床指南
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <!--<div class="flex-item">
+                <a href="" class="tool_block">
+                    <div class="flex-center">
+                        <div class="pic">
+                            <img src="res/images/logo2.png" />
+                        </div>
+                        <div class="flex-item">
+                            全医药学大词典
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="flex-center">
+            <div class="flex-item">
+                <a href="" class="tool_block">
+                    <div class="flex-center">
+                        <div class="pic">
+                            <img src="res/images/logo3.png" />
+                        </div>
+                        <div class="flex-item">
+                            用药参考
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="flex-item">
+                <a href="" class="tool_block">
+                    <div class="flex-center">
+                        <div class="pic">
+                            <img src="res/images/logo4.png" />
+                        </div>
+                        <div class="flex-item">
+                            医学计算公式
+                        </div>
+                    </div>
+                </a>
+            </div>-->
+        </div>
+    </div>
+    <div class="tit_box">
+        <div class="flex-box">
+            <div class="flex-item">
+                <div class="tit">
+                    会议工具
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tools_box">
+        <div class="flex-center">
+            <div class="flex-item">
+                <a href="/wechat/tools/meeting" class="tool_block">
+                    <div class="flex-center">
+                        <div class="pic">
+                            <img src="res/images/logo5.png" />
+                        </div>
+                        <div class="flex-item">
+                            OMES平台
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+#end
+<!--
+
+<script>
+    $(document).ready(function () {
+        window.location.href = "/wechat/front/guide";
+        /*$("#guide").click(function () {
+            $.ajax({
+                type: "GET",
+                cache: false,
+                async: false,
+                dataType: "json",
+                url: '/wechat/front/guide',
+                success: function (json) {
+                    if (json.success) {
+                        window.location.href = json.data;
+                    }else{
+                        alert(json.msg);
+                        return false;
+                    }
+                }
+            })
+        });*/
+    })
+</script>-->

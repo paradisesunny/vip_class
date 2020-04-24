@@ -1,0 +1,102 @@
+#@layout_wechat()
+#define page_title()
+个人中心
+#end
+#define page_top_url()
+/wechat/front/index
+#end
+#define main()
+<body>
+#@page_top2()
+<div class="user_box">
+    <div class="flex-center">
+        <div class="pic">
+            <img src="#(headImg??)"/>
+        </div>
+        <div class="flex-item" onclick="javascript:location.href='wechat/userCenter/edit'">
+            <span class="user_name">#(name??)</span>
+        </div>
+        <div class="my_collect_block">
+            <a class="my_collect" href="/wechat/userCenter/collect">我的收藏</a>
+        </div>
+    </div>
+</div>
+<div class="tit_box">
+    <div class="flex-box">
+        <div class="flex-item">
+            <div class="tit">
+                我的成长值
+            </div>
+        </div>
+    </div>
+</div>
+<div class="growthValue-box">
+    <div class="growVal-txt">
+        当前成长值
+        <a href="javascript:void(0)" class="growVal-rule-btn">成长值规则</a>
+    </div>
+    <h1 class="growVal">#(user.puTotalScore)</h1>
+    <div class="flex-box growVal-btn">
+        <a href="/wechat/userCenter/scoreList" class="flex-item growDet-btn">成长值明细</a>
+        <a href="/wechat/userCenter/scoreTaskList" class="flex-item growTask-btn">成长值任务</a>
+    </div>
+</div>
+<div class="tit_box">
+    <div class="flex-box">
+        <div class="flex-item">
+            <div class="tit">
+                我的课程
+            </div>
+        </div>
+    </div>
+</div>
+<div class="list_box article_box">
+    <div class="list_cont">
+        #if(courseList!=""&&courseList.size()>0)
+        #for(file:courseList??)
+        <a href="/wechat/resources/listNewsByCategory?categoryId=#(file.fileId??)" class="list_block border_btm">
+            <div class="flex-box">
+                <div class="pic">
+                    #if(file.filePic != null)
+                    <img src="#(file.filePic??)"/>
+                    #else
+                    <img src="res/images/pic04.png"/>
+                    #end
+                </div>
+                <div class="flex-item">
+                    <div class="overflow-two tit">
+                        #(file.fileName??)
+                    </div>
+                    <div class="course_num">
+                        学习进度：#(file.percent??)
+                    </div>
+                </div>
+            </div>
+        </a>
+        #end
+        #else
+        暂无课程
+        #end
+    </div>
+    <div class="growRule-popBox" style="display:none;">
+        <div class="posFixed">
+            <a href="javascript:void(0)" class="closePop"></a>
+            <div class="growRule-txt">1.成长值是您在本平台活跃与资历的标识。</div>
+            <div class="growRule-txt">2.您可通过完成成长值任务（例如阅读文章，完成课程等）提升您的成长值。</div>
+        </div>
+    </div>
+</div>
+</body>
+#end
+<script>
+    $(document).ready(function () {
+        //打开提示框
+        $(".growVal-rule-btn").click(function () {
+            $(".growRule-popBox").show();
+        });
+        //关闭提示框
+        $(".closePop").click(function () {
+            $(".growRule-popBox").hide();
+        });
+    });
+</script>

@@ -1,0 +1,115 @@
+#@layout_admin()
+<form class="layui-form" action="" method="post">
+    <input type="hidden" name="ncId" value="#(newsCategory.ncId??)">
+    <input type="hidden" id="type" name="ncAdd1" value="#(newsCategory.ncAdd1??)"/>
+    <div class="layui-form-item" style="margin-top: 20px">
+        <label class="layui-form-label">节点名称</label>
+        <div class="layui-input-block" style="margin-right: 20px">
+            <input type="text" name="ncName" lay-verify="required" lay-reqtext="节点名称是必填项" autocomplete="off"
+                   class="layui-input" value="#(newsCategory.ncName??)">
+        </div>
+    </div>
+    #if(newsCategory.ncPid != 0)
+        <div class="layui-form-item">
+            <label class="layui-form-label">父节点id</label>
+            <div class="layui-input-inline">
+                <select name="ncPid" id="ncPid" lay-verify="required">
+                    <option value="">父节点id</option>
+                </select>
+            </div>
+        </div>
+        <input hidden name="type" id="imgType" value="#(com.kingyee.prad.common.Const::PIC_TYPE_NEWS_CATEGORY)">
+        <div class="layui-form-item">
+            <label class="layui-form-label">缩略图</label>
+            <div style="width: unset;">
+                <button type="button" id="uploadPicPath" class="layui-btn layui-btn-primary">上传</button>
+                <img style="max-width: 250px;" src="#(newsCategory.ncPicPath??)" id="imgPicPath"/>
+                <input type="hidden" name="ncPicPath" value="#(newsCategory.ncPicPath??)" id="ncPicPath">
+                <p class="msgText"></p>
+            </div>
+        </div>
+    #end
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <input type="button" class="layui-btn" lay-filter="updBtn" lay-submit="" value="提交">
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+    layui.use(['form', 'upload'], function () {
+        var $ = layui.jquery
+            , layer = layui.layer
+            , upload = layui.upload
+            , form = layui.form;
+        getParentNodeList();
+        //缩略图图片上传
+        var uploadImg = upload.render({
+            elem: '#uploadPicPath' //绑定元素
+            , url: '/admin/upload/uploadPic'
+            , data: {
+                type: $("#imgType").val()
+            }
+            , done: function (res) {
+                var msg = res.msg;
+                if (res.success == true) {
+                    msg = "上传成功";
+                    $("#imgPicPath").attr("src", res.data);
+                    $("#ncPicPath").attr("value", res.data);
+                }
+                layer.alert(msg);
+            }
+            , error: function () {
+                //演示失败状态，并实现重传
+                var msgText = $('.msgText');
+                msgText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                msgText.find('.demo-reload').on('click', function () {
+                    uploadImg.upload();
+                });
+            }
+        });
+
+        //监听提交
+        form.on('submit(updBtn)', function (data) {
+            console.log(data.field);
+            $.ajax({
+                type: 'post',
+                url: '/admin/newsCate/save',
+                data: data.field,
+                dataType: 'json',
+                success: function (res) {
+                    if (res.success) {
+                        /*实现子窗体关闭:关闭特定索引的窗口, 拿到父窗口的索引值后再进行关闭*/
+                        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                        parent.layer.close(index); //再执行关闭
+                        parent.window.location.reload();//刷新父页面
+                    }
+                },
+            });
+        });
+
+    });
+
+    //发送获取父节点列表异步请求
+    function getParentNodeList() {
+        $.ajax({
+            url: '/admin/newsCate/getParentNodeList',
+            data:{type:$("#type").val()},
+            success: function (res) {
+                if (res.success) {
+                    console.log(res);
+                    for (var i = 0; i < res.data.length; i++) {
+                        $("#ncPid").append("<option value=\"" + res.data[i].ncId + "\">" + res.data[i].ncName + "</option>");
+                    }
+                    if (#(newsCategory != null)) {
+                        $("#ncPid").find("option[value=" + '#(newsCategory.ncPid??)' + "]").prop("selected", true);
+                    }
+                    //重新渲染
+                    layui.form.render("select");
+                } else {
+                    layer.msg(res.message);
+            ``  }
+            }
+        });
+    }
+</script>
+</body>

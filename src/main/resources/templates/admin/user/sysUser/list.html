@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+#@layout_admin()
+
+#define title()
+<title>安斯泰来智能平台</title>
+#end
+#define main()
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    #include("../../include/head.html",navId="nav_user", subNavId="nav_user_sys")
+    <div class="layui-body" style="top:50px">
+        <table class="layui-hide" lay-filter="dataTale" id="item"></table>
+    </div>
+</div>
+<script type="text/html" id="toolbarDemo">
+    <form action="/admin/sysUser/list" class="layui-form layui-col-md12 x-so" name="searchForm" id="searchForm"
+          method="post">
+        <span style="font-size: 18px;margin-right: 10px">系统管理员</span>
+        <div class="layui-input-inline">
+            <input type="text" id="keyword" name="keyword" value="" class="form-control" style="height: 30px" placeholder="姓名"/>
+        </div>
+        <button type="button" id="search" class="layui-btn layui-btn-sm" lay-submit
+                lay-filter="search"><i class="layui-icon">&#xe615;</i>
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm"
+                onclick="javascript:window.location.href='/admin/sysUser/edit'">添加
+        </button>
+    </form>
+</script>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs"
+       onclick="javascript:window.location.href='/admin/sysUser/edit?id={{ d.suId }}'">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script>
+    layui.use(['table', 'form', 'util'], function () {
+        var table = layui.table;
+        var form = layui.form;
+        var util = layui.util;
+        table.render({
+            id: "tableReload"
+            , elem: '#item'
+            , url: '/admin/sysUser/listAjax'
+            , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+            , defaultToolbar: {}
+            , page: {
+                theme: '#5762A4'
+            }
+            , autoSort: false
+            , loading: false
+            , cols: [[
+                {
+                    title: '序号', width: 90, fixed: true, align: 'center', templet: function (d) {
+                        return d.LAY_INDEX;
+                    }
+                }
+                , {field: 'suLoginName', title: '登录名', align: 'center', sort: true}
+                , {
+                    field: 'suCreateTime', width: 120, title: '创建日期', align: 'center', sort: true,
+                    templet: function (d) {
+                        if (d.suCreateTime) {
+                            return util.toDateString(d.suCreateTime, 'yyyy-MM-dd');
+                        } else {
+                            return '';
+                        }
+                    }
+                }, {
+                    field: 'suUpdateTime', width: 120, title: '创建日期', align: 'center', sort: true,
+                    templet: function (d) {
+                        if (d.suUpdateTime) {
+                            return util.toDateString(d.suUpdateTime, 'yyyy-MM-dd');
+                        } else {
+                            return '';
+                        }
+                    }
+                }, {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 120}
+            ]]
+        });
+        //监听排序事件
+        table.on('sort(dataTale)', function (obj) {
+            table.reload('tableReload', {
+                initSort: obj //记录初始排序，如果不设的话，将无法标记表头的排序状态。
+                , where: { //请求参数（注意：这里面的参数可任意定义，并非下面固定的格式）
+                    field: obj.field //排序字段
+                    , order: obj.type //排序方式
+                }
+            });
+        });
+        //查询
+        form.on('submit(search)', function (data) {
+            var formData = data.field;
+            console.debug(formData);
+            var searchWord = formData.keyword;
+            table.reload('tableReload', {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: {
+                    keyword: searchWord
+                },
+                method: 'get',
+                url: '/admin/sysUser/listAjax',
+            });
+            $("#keyword").val(searchWord);
+            return false;
+        });
+
+        //监听行工具事件
+        table.on('tool(dataTale)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'del') {
+                layer.confirm('真的删除行么', function (index) {
+                    $.ajax({
+                        type: "get",
+                        url: "/admin/sysUser/del",
+                        data: {
+                            id: data.suId,//此处是根据id查询此id是否被删除，故将id传向后端
+                        },
+                        success: function (ev) {
+                            if (ev.success) {
+                                obj.del();
+                                layer.close(index);
+                            } else {
+                                layer.alert(ev.msg);
+                            }
+                        }
+
+                    });
+                });
+            }
+        });
+    });
+</script>
+</body>
+#end

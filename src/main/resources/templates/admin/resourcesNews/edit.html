@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+#@layout_admin()
+
+#define title()
+<title>安斯泰来智能平台</title>
+#end
+
+#define css()
+#end
+#define main()
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    #include("../include/head.html",navId="nav_news", subNavId="nav_news_resources")
+    <div class="layui-body">
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            <legend>#(title??)</legend>
+        </fieldset>
+        <form class="layui-form" action="/admin/resources/news/save" method="post" style="width: 800px">
+            <input name="neId" type="hidden" value="#(news.neId??)"/>
+            <div class="layui-form-item">
+                <label class="layui-form-label">标题</label>
+                <div class="layui-input-block">
+                    <input type="text" name="neTitle" lay-verify="required" lay-reqtext="标题是必填项" autocomplete="off"
+                           class="layui-input" value="#(news.neTitle??)">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label for="neStartDateStr" class="layui-form-label">开始时间</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input" name="neStartDateStr" id="neStartDateStr"
+                           lay-verify="required" lay-reqtext="开始时间是必填项" placeholder="yyyy-MM-dd HH:mm:ss"
+                           value="#(startTime??)">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label for="neEndDateStr" class="layui-form-label">结束时间</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input" name="neEndDateStr" id="neEndDateStr"
+                           lay-verify="required" lay-reqtext="结束时间是必填项" placeholder="yyyy-MM-dd HH:mm:ss"
+                           value="#(endTime??)">
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">内容</label>
+                <div class="layui-input-block">
+                    <!-- 加载编辑器的容器 -->
+                    <script id="container" name="neContent" type="text/plain">#(news.neContent??)</script>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">视频路径</label>
+                <div class="layui-input-block">
+                    <input type="text" name="neVideoPath" lay-verify="required" lay-reqtext="视频id是必填项"
+                           autocomplete="off"
+                           class="layui-input" value="#(news.neVideoPath??)">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">主题模板</label>
+                <div class="layui-input-inline">
+                    <select name="neNcId" id="neNcId" lay-verify="required">
+                        <option value="">主题</option>
+                    </select>
+                </div>
+            </div>
+
+            <input hidden name="type" id="imgType" value="#(com.kingyee.prad.common.Const::PIC_PATH_RESOURCES)">
+            <div class="layui-form-item">
+                <label class="layui-form-label">缩略图(2:1)</label>
+                <div style="width: unset;">
+                    <button type="button" id="uploadThumbnail" class="layui-btn layui-btn-primary">上传</button>
+                    <img style="max-width: 250px;" src="#(news.neThumbnailPath??)" id="imgThumbnail"/>
+                    <input type="hidden" name="neThumbnailPath" value="#(news.neThumbnailPath??)"
+                           id="neThumbnailPath">
+                    <p class="msgText"></p>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">轮播图(2:1)</label>
+                <div style="width: unset;">
+                    <button type="button" id="uploadCarousel" class="layui-btn layui-btn-primary">上传</button>
+                    <img style="max-width: 250px;" src="#(news.neCarouselPath??)" id="imgCarouselPath"/>
+                    <input type="hidden" name="neCarouselPath" value="#(news.neCarouselPath??)"
+                           id="neCarouselPath">
+                    <p class="msgText"></p>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">头图</label>
+                <div class="layui-input-block" id="checkBanner">
+                    <input type="hidden" id="neIsBanner" name="neIsBanner">
+                    <input type="checkbox" lay-skin="switch"
+                           lay-filter="banner" lay-text="是|否"
+                           value="1"
+                           #if(news.neIsBanner??==1) checked #end>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">轮播图</label>
+                <div class="layui-input-block" id="CheckCarousel">
+                    <input type="hidden" id="neIsCarousel" name="neIsCarousel">
+                    <input type="checkbox" lay-skin="switch"
+                           lay-filter="carousel" lay-text="显示|不显示"
+                           value="1"
+                           #if(news.neIsCarousel??==1) checked #end>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">是否有效</label>
+                <div class="layui-input-block" id="checkIsValid">
+                    <input type="hidden" id="neIsValid" name="neIsValid">
+                    <input type="checkbox" lay-skin="switch"
+                           lay-filter="isValid" lay-text="是|否"
+                           value="1"
+                           #if(news.neIsValid?? !=null && news.neIsValid??==1) checked #end>
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn layui-btn-checked" lay-submit="" lay-filter="layuiForm">提交</button>
+                </div>
+            </div>
+        </form>
+        <div class="layui-form-item" style="position: absolute;margin-left: 600px;margin-top: -40px">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal"
+                        onclick="javascript:window.location.href='/admin/resources/news/list?catePk=#(catePk)'">取消
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var ue;
+    $(document).ready(function () {
+        // 实例化编辑器
+        ue = UE.getEditor('container', {
+            // topOffset: 50,//浮动时工具栏距离浏览器顶部的高度，用于某些具有固定头部的页面
+            initialFrameHeight: 400
+        });
+    });
+
+    layui.use(['form', 'laydate', 'upload'], function () {
+        var $ = layui.jquery,
+            form = layui.form
+            , layer = layui.layer
+            , laydate = layui.laydate
+            , upload = layui.upload;
+        getTopPic();
+        //发布日期时间选择器
+        laydate.render({
+            elem: '#neStartDateStr'
+            , type: 'datetime'
+        });
+        laydate.render({
+            elem: '#neEndDateStr'
+            , type: 'datetime'
+        });
+        //监听提交
+        form.on('submit(layuiForm1)', function (data) {
+            console.log(data.field);
+            return false;
+        });
+        //监听轮播图显示开关
+        form.on('switch(carousel)', function (data) {
+            $('#neIsCarousel').val(this.checked ? 1 : 0);
+        });
+        //监听头图显示开关
+        form.on('switch(banner)', function (data) {
+            $('#neIsBanner').val(this.checked ? 1 : 0);
+        });
+
+        //监听是否有效显示开关
+        form.on('switch(isValid)', function (data) {
+            $('#neIsValid').val(this.checked ? 1 : 0);
+        });
+        //缩略图图片上传
+        var uploadneThumbnailImg = upload.render({
+            elem: '#uploadThumbnail' //绑定元素
+            , url: '/admin/upload/uploadPic'
+            , data: {
+                type: $("#imgType").val()
+            }
+            // , accept: 'images'
+            // , auto: false
+            // , choose: function (obj) {
+            //     obj.preview(function (index, file, result) {
+            //         var img = new Image();
+            //         img.onload = function () {
+            //             console.log('choose poster', img.width, img.height)
+            //             if (img.width / img.height <= 2 && img.width / img.height > 1) {
+            //                 obj.upload(index, file);
+            //             } else {
+            //                 layer.msg('您上传的图片像素宽高比必须是:2:1');
+            //             }
+            //         };
+            //         img.src = result;
+            //     })
+            // }
+            , done: function (res) {
+                var msg = res.msg;
+                if (res.success == true) {
+                    msg = "上传成功";
+                    $("#imgThumbnail").attr("src", res.data);
+                    $("#neThumbnailPath").attr("value", res.data);
+                }
+                layer.alert(msg);
+            }
+            , error: function () {
+                //演示失败状态，并实现重传
+                var msgText = $('.msgText');
+                msgText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                msgText.find('.demo-reload').on('click', function () {
+                    uploadneThumbnailImg.upload();
+                });
+            }
+        });
+        //轮播图上传
+        var uploadneCarouselImg = upload.render({
+            elem: '#uploadCarousel' //绑定元素
+            , url: '/admin/upload/uploadPic' //上传接口
+            , data: {
+                type: $("#imgType").val()
+            }
+            // , accept: 'images'
+            // , auto: false
+            // , choose: function (obj) {
+            //     obj.preview(function (index, file, result) {
+            //         var img = new Image();
+            //         img.onload = function () {
+            //             console.log('choose poster', img.width, img.height)
+            //             if (img.width / img.height <= 2 && img.width / img.height > 1) {
+            //                 obj.upload(index, file);
+            //             } else {
+            //                 layer.msg('您上传的图片像素宽高比必须是:2:1');
+            //             }
+            //         };
+            //         img.src = result;
+            //     })
+            // }
+            , done: function (res) {
+                var msg = res.msg;
+                if (res.success == true) {
+                    msg = "上传成功";
+                    $("#imgCarouselPath").attr("src", res.data);
+                    $("#neCarouselPath").attr("value", res.data);
+                }
+                layer.alert(msg);
+            }
+            , error: function () {
+                //演示失败状态，并实现重传
+                var msgText = $('.msgText');
+                msgText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                msgText.find('.demo-reload').on('click', function () {
+                    uploadneCarouselImg.upload();
+                });
+            }
+        });
+
+    });
+
+    //发送查询主题列表异步请求
+    function getTopPic() {
+        $.ajax({
+            url: '/admin/resources/news/getTopic',
+            success: function (res) {
+                if (res.success) {
+                    console.log(res);
+                    for (var i = 0; i < res.data.length; i++) {
+                        $("#neNcId").append("<option value=\"" + res.data[i].ncId + "\">" + res.data[i].ncName + "</option>");
+                    }
+                    if (#(news != null)) {
+                        $("#neNcId").find("option[value=" + '#(news.neNcId??)' + "]").prop("selected", true);
+                    }
+                    //重新渲染
+                    layui.form.render("select");
+                } else {
+                    layer.msg(res.message);
+                }
+            }
+        });
+    }
+</script>
+</body>
+#end

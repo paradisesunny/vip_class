@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="V9.4.0" author="nmy">
+        <comment>用户表加字段</comment>
+        <addColumn tableName="prad_user">
+            <column name="pu_medlive_user_id" type="bigint(20)" remarks="医脉通用户id"/>
+            <column name="pu_medlive_user_thumb" type="varchar(512)" remarks="医脉通用户头像"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>
+

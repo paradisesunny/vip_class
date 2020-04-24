@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+#@layout_admin()
+
+#define title()
+<title>安斯泰来智能平台</title>
+#end
+
+#define main()
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    #if(type == null || type == "0")
+        #include("../include/head.html",navId="nav_news", subNavId="nav_news_cate")
+    #else
+        #include("../include/head.html",navId="nav_news", subNavId="nav_news_label")
+    #end
+    <input type="text" id="type" value="#(type??)"/>
+    <div class="layui-form-item" style="width:20%;margin-left:11%;">
+        <label class="layui-form-label">父节点</label>
+        <div class="layui-input-block">
+            <input type="text" id="ncName" name="ncName" lay-verify="required" lay-reqtext="父节点名称" autocomplete="off"
+                   class="layui-input" value="#(news.neTitle??)">
+            <button type="button" class="layui-btn layui-btn-sm" style="margin-left:110%;margin-top:-35%;"
+                    onclick="addParentCate()">添加
+            </button>
+        </div>
+    </div>
+    <div class="layui-body" style="top:150px;">
+        <div id="dataTree"></div>
+    </div>
+</div>
+
+<script>
+    layui.use(['tree', 'upload'], function () {
+        var layer = layui.layer, tree = layui.tree;
+        tree.render({
+            elem: '#dataTree',
+            data: getNode(),
+            id: 'treeId',
+            showCheckbox: false,
+            onlyIconControl: true,//是否仅允许节点左侧图标控制展开收缩
+            showSearch: false,//是否打开节点过滤
+            edit: ['add', 'del'],//操作节点的图标,
+            click: function (obj) {
+                console.log(obj.data.id)
+                layer.open({
+                    type: 2,
+                    title: "修改节点信息",
+                    area: ['650px', '400px'],
+                    shade: 0.6,//遮罩透明度
+                    maxmin: true,//允许全屏最小化
+                    scrollbar: false,//禁止浏览器滚动
+                    content: '/admin/newsCate/getNode?pk=' + obj.data.id,
+                    shadeClose: true,
+                });
+            },
+            operate: function (obj) {
+                var type = obj.type;
+                var data = obj.data;
+                var elem = obj.elem;
+                var id = data.id;
+                if (type === 'add') {
+                    $.ajax({
+                        type: "post",
+                        url: "/admin/newsCate/add",
+                        data: {
+                            pk: id,
+                            type:$("#type").val()
+                        },
+                        success: function (res) {
+                            location.reload();
+                        }
+                    })
+                } else if (type === 'update') {
+                    layer.open({
+                        type: 2,
+                        title: "修改节点信息",
+                        area: ['650px', '400px'],
+                        shade: 0.6,//遮罩透明度
+                        maxmin: true,//允许全屏最小化
+                        scrollbar: false,//禁止浏览器滚动
+                        content: '/admin/newsCate/getNode?pk=' + id,
+                        shadeClose: true,
+                    });
+                } else if (type === 'del') {
+                    $.get('/admin/newsCate/getDelNews', {pk: id}, function (res) {
+                        if (res.count > 0) {
+                            var str = '';
+                            for (var i = 0; i < res.data.length; i++) {
+                                str += res.data[i].neTitle;
+                                str += '<br/>';
+                            }
+                            str += '<br/><br/>';
+                            layer.open({
+                                title: '关联资讯列表',
+                                type: 1,
+                                area: '400px;',
+                                btnAlign: 'c',
+                                content: '<div style="padding: 20px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;">' + str + '删除标签或分类不会删除资讯</div>',
+                                btn: ['确定', '取消'],
+                                btn1: function (index) {
+                                    $.get('admin/newsCate/del', {pk: id,type:$("#type").val()}, function (res) {
+                                        location.reload();
+                                        layer.close(newsCateIndex);
+                                    })
+                                },
+                                btn2: function (index) {
+                                    location.reload();
+                                    layer.close(newsCateIndex);
+                                }
+                            })
+                        } else {
+                            $.get('admin/newsCate/del', {pk: id}, function (res) {
+                                location.reload();
+                            })
+                        }
+                    })
+                }
+            }
+        });
+
+
+    });
+
+    //发去获取节点异步请求
+    function getNode() {
+        var data;
+        $.ajax({
+            type: "get",
+            url: "/admin/newsCate/listAjax",
+            async: false,
+            data:{type:$("#type").val()},
+            success: function (res) {
+                data = res.data;
+            }
+        });
+        return data;
+    }
+
+    //新增父节点
+    function addParentCate() {
+        if(!$("#ncName").val()){
+            alert("请输入父节点名称");
+            return false;
+        }
+        $.ajax({
+            type: "post",
+            url: "/admin/newsCate/save",
+            async: false,
+            data:{ncPid:0,ncName:$("#ncName").val(),ncAdd1:$("#type").val()},
+            success: function (res) {
+                if (res.success) {
+                    window.location.reload();
+                }
+            }
+        });
+    }
+</script>
+</body>
+#end

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="V10.1.0" author="nmy">
+        <comment>资讯表添加字段</comment>
+        <addColumn tableName="prad_news">
+            <column name="ne_nc_ids" type="varchar(64)" remarks="分类id（可选多个）"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>
+

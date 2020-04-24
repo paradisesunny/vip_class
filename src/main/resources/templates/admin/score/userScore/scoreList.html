@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+#@layout_admin()
+
+#define title()
+<title>安斯泰来智能平台</title>
+#end
+#define main()
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    #include("../../include/head.html",navId="nav_user", subNavId="nav_user_reg")
+    <div class="layui-body" style="top:50px">
+        <table class="layui-hide" lay-filter="dataTale" id="item"></table>
+    </div>
+</div>
+<input type="hidden" value="#(user.puId??)" id="userId" name="userId"/>
+<script type="text/html" id="toolbarDemo">
+    <form action="/admin/score/listUserTotalScore" class="layui-form layui-col-md12 x-so" name="searchForm" id="searchForm"
+          method="post">
+        <span style="font-size: 18px;margin-right: 10px">
+            <a href="/admin/regUser/list">用户列表</a> >> #(user.puName)-的积分明细
+        </span>
+        <div class="layui-input-inline">
+            <input type="text" id="keyword" name="keyword" value="" class="form-control" style="height: 30px"
+                   placeholder="规则名称"/>
+        </div>
+        <button type="button" id="search" class="layui-btn layui-btn-sm" lay-submit
+                lay-filter="search"><i class="layui-icon">&#xe615;</i>
+        </button>
+    </form>
+</script>
+
+<!--<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>-->
+<script>
+    layui.use(['table', 'form', 'util'], function () {
+        var table = layui.table;
+        var form = layui.form;
+        var util = layui.util;
+        table.render({
+            id: "tableReload"
+            , elem: '#item'
+            , url: '/admin/userScore/listUserScoreAjax'
+            , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+            , defaultToolbar: {}
+            , page: {
+                theme: '#5762A4'
+            }
+            ,where:{userId:$("#userId").val()}
+            ,userId:1
+            , autoSort: false
+            , loading: false
+            , cols: [[
+                {
+                    title: '序号', width: 90, fixed: true, align: 'center', templet: function (d) {
+                        return d.LAY_INDEX;
+                    }
+                }
+                , {field: 'stType', width: 110, title: '规则名称', align: 'center', sort: true}
+                , {field: 'stScore', width: 110, title: '分数', align: 'center', sort: true}
+                , {
+                    field: 'stCreateTime', width: 120, title: '创建时间', align: 'center', sort: true,
+                    templet: function (d) {
+                        if (d.stCreateTime) {
+                            return util.toDateString(d.stCreateTime, 'yyyy-MM-dd');
+                        } else {
+                            return '';
+                        }
+                    }
+                }
+                // , {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 120}
+            ]]
+        });
+        //监听排序事件
+        table.on('sort(dataTale)', function (obj) {
+            table.reload('tableReload', {
+                initSort: obj //记录初始排序，如果不设的话，将无法标记表头的排序状态。
+                , where: { //请求参数（注意：这里面的参数可任意定义，并非下面固定的格式）
+                    field: obj.field //排序字段
+                    , order: obj.type //排序方式
+                }
+            });
+        });
+        //查询
+        form.on('submit(search)', function (data) {
+            var formData = data.field;
+            console.debug(formData);
+            var searchWords = formData.keyword;
+            var userId = formData.userId;
+            table.reload('tableReload', {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: {
+                    keyword: searchWords,
+                    userId:userId
+                },
+                method: 'get',
+                url: '/admin/userScore/listUserScoreAjax',
+            });
+            $("#keyword").val(searchWords);
+            return false;
+        });
+
+
+        //监听行工具事件
+        table.on('tool(dataTale)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'del') {
+                layer.confirm('确定要删除该用户的积分吗？', function (index) {
+                    $.ajax({
+                        type: "get",
+                        url: "/admin/score/deleteRule",
+                        data: {
+                            id: data.stId,
+                        },
+                        success: function (ev) {
+                            if (ev.success) {
+                                obj.del();
+                                layer.close(index);
+                            } else {
+                                layer.alert(ev.msg);
+                            }
+                        }
+
+                    });
+                });
+            }
+        });
+    });
+</script>
+</body>
+#end

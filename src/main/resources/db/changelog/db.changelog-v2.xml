@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="V2.0.0" author="zhl">
+        <comment>用户扫码记录</comment>
+        <createTable tableName="pr_scan" remarks="用户扫码记录">
+            <column name="sc_pk" type="bigint" remarks="主键" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="sc_open_id" type="varchar(64)" remarks="openId"/>
+            <column name="sc_event_key" type="varchar(64)" remarks="扫码参数"/>
+            <column name="sc_create_date" type="bigint(20)" remarks="扫码时间"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

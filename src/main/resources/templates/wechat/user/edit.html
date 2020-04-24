@@ -1,0 +1,272 @@
+#@layout_wechat()
+#define page_title()
+编辑资料
+#end
+#define page_top_url()
+/wechat/userCenter/center
+#end
+
+#define js()
+<script type="text/javascript" src="js/wechat/userInfo.js"></script>
+#end
+#define main()
+<body>
+#@page_top2()
+<form action="/wechat/userCenter/update" method="post">
+    <input type="hidden" name="puId" value="#(regUser.puId??)">
+    <div class="register_box">
+        <div class="register_line">
+            <div class="flex-center">
+                <div class="flex-item">
+                    <input class="txt" type="text" name="puName" placeholder="请输入姓名" value="#(regUser.puName??)"/>
+                </div>
+            </div>
+        </div>
+        <div class="register_line">
+            <div class="flex-center">
+                <div class="flex-item">
+                    <input type="hidden" id="puProvince" name="puProvince" value="#(regUser.puProvince??)">
+                    <input type="hidden" id="puProvinceId" name="puProvinceId" value="#(regUser.puProvinceId??)">
+                    <input type="hidden" id="puCity" name="puCity" value="#(regUser.puCity??)">
+                    <input type="hidden" id="puCityId" name="puCityId" value="#(regUser.puCityId??)">
+                    <input type="hidden" id="puRegion" name="puRegion" value="#(regUser.puRegion??)">
+                    <input type="hidden" id="puRegionId" name="puRegionId" value="#(regUser.puRegionId??)">
+                    <input id="address" class="sele" type="text" placeholder="请选择地址"
+                           value="#(regUser.puProvince??)#(regUser.puCity??)#(regUser.puRegion??)"/>
+                </div>
+            </div>
+        </div>
+        <div class="register_line">
+            <div class="flex-center">
+                <div class="flex-item">
+                    <input id="yiyuan" class="txt" type="text" placeholder="请输入医院" name="puHospital"
+                           value="#(regUser.puHospital??)"/>
+                </div>
+            </div>
+        </div>
+        <div class="register_line">
+            <div class="flex-center">
+                <div class="flex-item">
+                    <input id="keshi" data-keshivalue="02" class="sele" type="text" name="puDept" placeholder="请选择科室"
+                           value="#(regUser.puDept??)"/>
+                </div>
+            </div>
+        </div>
+        <div class="register_line">
+            <div class="flex-center">
+                <div class="flex-item">
+                    <input id="zhicheng" data-zhichengvalue="04" class="sele" type="text" name="puProfessional"
+                           placeholder="请选择职称" value="#(regUser.puProfessional??)"/>
+                </div>
+            </div>
+        </div>
+        <div class="register_line">
+            <div class="flex-center">
+                <div class="flex-item">
+                    <input class="txt" type="text" id="puPhone" name="puPhone" placeholder="请输入11位数字"
+                           value="#(regUser.puPhone??)"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="register_line" hidden id="showCode">
+            <div class="flex-center">
+                <div class="flex-item">
+                    <input class="txt" type="text" id="scCode" name="scCode" placeholder="请输入6位验证码"/>
+                </div>
+                <div class="code_block">
+                    <button class="code_btn" type="button" id="getCode">获取验证码</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="btn_box">
+        <button class="btn" type="submit" id="updateBtn">修改</button>
+    </div>
+</form>
+
+<script>
+    (function ($, doc) {
+        $.init();
+        $.ready(function () {
+            /**
+             * 获取对象属性的值
+             * 主要用于过滤三级联动中，可能出现的最低级的数据不存在的情况，实际开发中需要注意这一点；
+             * @param {Object} obj 对象
+             * @param {String} param 属性名
+             */
+            var _getParam = function (obj, param) {
+                return obj[param] || '';
+            };
+            var cityPicker3 = new $.PopPicker({
+                layer: 3
+            });
+
+            cityPicker3.setData(cityData3);
+            var showCityPickerButton = doc.getElementById('address');
+            var cityResult3 = doc.getElementById('address');
+            showCityPickerButton.addEventListener('tap', function (event) {
+                cityPicker3.show(function (items) {
+                    cityResult3.value = items[0].text + items[1].text + items[2].text;
+                    //返回 false 可以阻止选择框的关闭
+                    //return false;
+                    doc.getElementById('puProvinceId').value = items[0].value;
+                    doc.getElementById('puProvince').value = items[0].text;
+                    doc.getElementById('puCityId').value = items[1].value;
+                    doc.getElementById('puCity').value = items[1].text;
+                    doc.getElementById('puRegionId').value = items[2].value;
+                    doc.getElementById('puRegion').value = items[2].text;
+                });
+            }, false);
+
+
+            //选择科室
+            var keshiPicker = new $.PopPicker();
+            keshiPicker.setData([{
+                value: '01',
+                text: '泌尿外科'
+            }, {
+                value: '02',
+                text: '内分泌科'
+            }, {
+                value: '03',
+                text: '肾内科'
+            }, {
+                value: '04',
+                text: '感染科'
+            }, {
+                value: '05',
+                text: '呼吸科'
+            }, {
+                value: '06',
+                text: '消化科'
+            }, {
+                value: '07',
+                text: '心血管内科'
+            }, {
+                value: '08',
+                text: '其他'
+            }]);
+            var showKeShiPicker = doc.getElementById('keshi');
+            var keshiResult = doc.getElementById('keshi');
+            showKeShiPicker.addEventListener('tap', function (event) {
+                /*var oldValue = keshiResult.dataset.keshivalue;
+                console.log("旧的值：" + oldValue);
+                if (oldValue != '') {
+                    keshiPicker.pickers[0].setSelectedValue(oldValue, 200);  //设置初始值。
+                }*/
+                keshiPicker.show(function (items) {
+                    console.log(items[0].text);
+                    keshiResult.value = items[0].text;
+                    // keshiResult.dataset.keshivalue = items[0].value;
+                    //返回 false 可以阻止选择框的关闭
+                    //return false;
+                });
+            }, false);
+
+            //选择职称
+            var zhichengPicker = new $.PopPicker();
+            zhichengPicker.setData([{
+                value: '01',
+                text: '住院医师'
+            }, {
+                value: '02',
+                text: '主治医师'
+            }, {
+                value: '03',
+                text: '副主任医师'
+            }, {
+                value: '04',
+                text: '主任医师'
+            }, {
+                value: '05',
+                text: '其他'
+            }]);
+            var showZhiChengPickerPicker = doc.getElementById('zhicheng');
+            var zhichengResult = doc.getElementById('zhicheng');
+            showZhiChengPickerPicker.addEventListener('tap', function (event) {
+                /*var oldValue = zhichengResult.dataset.zhichengvalue;
+                console.log("旧的值：" + oldValue);
+                if (oldValue != '') {
+                    zhichengPicker.pickers[0].setSelectedValue(oldValue, 200);  //设置初始值。
+                }*/
+                zhichengPicker.show(function (items) {
+                    console.log(items[0].value);
+                    zhichengResult.value = items[0].text;
+                    // zhichengResult.dataset.zhichengvalue = items[0].value;
+
+                    //返回 false 可以阻止选择框的关闭
+                    //return false;
+                });
+            }, false);
+        });
+    })(mui, document);
+
+
+    //观察手机号输入框数字变化
+    $("#puPhone").on("input", function (e) {
+        $('#getCode').attr('disabled', "true");
+        if ((/^1[3456789]\d{9}$/.test(e.delegateTarget.value))) {
+            $('#getCode').removeAttr("disabled");
+        }
+        $("#showCode").show();
+        $("#updateBtn").css('color', '#555555')
+        $('#updateBtn').attr('disabled', "true");
+    })
+    $("#getCode").click(function () {
+        $.ajax({
+            url: "/common/sendCode",
+            type: "post",
+            cache: false,
+            global: false,
+            dataType: "json",
+            data: {
+                mobile: $("#puPhone").val(),
+                type: "mobile_modify"
+            },
+            success: function (json) {
+                if (json.success) {
+                    alert("验证码发送成功")
+                    $("#getCode").show();
+                    $("#getCode").attr("disabled", "disabled");
+                    var time = 60;
+                    var set = setInterval(function () {
+                        $("#getCode").html(--time + " s");
+                    }, 1000);
+
+                    setTimeout(function () {
+                        $("#getCode").attr("disabled", false).html("重新获取");
+                        clearInterval(set);
+                    }, 60000);
+                } else {
+                    alert(json.msg)
+                }
+            }
+        })
+    });
+    $("#scCode").on("input", function (e) {
+        console.log()
+        if (e.delegateTarget.value.length == 6) {
+            $.ajax({
+                url: "/common/checkCode",
+                type: "post",
+                cache: false,
+                global: false,
+                dataType: "json",
+                data: {
+                    code: e.delegateTarget.value,
+                },
+                success: function (json) {
+                    if (json.success) {
+                        $("#getCode").show();
+                        $('#updateBtn').removeAttr("disabled");
+                    } else {
+                        alert(json.msg)
+                    }
+                }
+            })
+        }
+    })
+</script>
+</body>
+#end

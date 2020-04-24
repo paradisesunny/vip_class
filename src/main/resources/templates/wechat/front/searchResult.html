@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+#@layout_wechat()
+
+#define page_top_url()
+/wechat/front/index
+#end
+
+#define page_title()
+搜索结果
+#end
+
+#define main()
+<body>
+    #@page_top2()
+    <input type="hidden" value="0" id="pageNum"/>
+    <form action="/wechat/front/searchResult" method="post">
+        <div class="search_box">
+            <div class="flex-box">
+                <div class="flex-item">
+                    <input type="text" class="search_txt" value="#(keyword)" name="keyword" id="keyword" placeholder="请输入检索词" />
+                </div>
+                <div class="search_right">
+                    <input type="submit" class="search_btn" value=""/>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="list_box latest_box">
+        <div class="list_cont" id="fronts">
+        </div>
+    </div>
+
+</body>
+#end
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        listData(1);
+    });
+
+    /**
+     * 滚动加载数据
+     * @param page
+     */
+    function listData(page) {
+        $.ajax({
+            type: "GET",
+            cache: false,
+            async: false,
+            dataType: "json",
+            url: '/wechat/front/searchResultAjax',
+            data: {
+                keyword: $("#keyword").val(),
+                rowsPerPage: 10,
+                page: page,
+            },
+            success: function (json) {
+                if(page == 1){
+                    $("#fronts").empty();
+                }
+                if (json.data != null && json.data.records && json.data.records.length > 0) {
+                    $("#fronts").append(createHtml(json.data));
+                }else{
+                    $("#loadMore").hide();
+                    if(page == 1){
+                        $("#fronts").empty();
+                        $("#fronts").append("<div style=\"margin-top: 22px; font-size: 16px; text-align: center\">暂无数据~</div>");
+                    }
+                }
+            }
+        });
+    }
+
+    function createHtml(data) {
+        $("#pageNum").val(data.current);
+        var html = "";
+        for (var i = 0; i < data.records.length; i++) {
+            var item = data.records[i];
+            html = html + '<a href="/wechat/news/getNewsById?newsId='+item.neId+'" class="list_block">';
+            html = html + '<div class="flex-box">';
+            html = html + '<div class="pic">';
+            if (item.neThumbnailPath != null) {
+                html = html + '<img src="'+item.neThumbnailPath+'"/>';
+            }else{
+                html = html + '<img src="res/images/pic02.png" />';
+            }
+            html = html + '</div>';
+            html = html + '<div class="flex-item">';
+            html = html + '<div class="overflow-two tit">'+item.neTitle+'</div>';
+            html = html + '<div class="read_infor">';
+            html = html + '<div class="flex-box">';
+            html = html + '<div class="flex-item">';
+            html = html + '<span class="time">'+item.nePublishDateStr+'</span>';
+            html = html + '</div>';
+            html = html + '<div class="flex-item">';
+            html = html + '<span class="read">'+item.neHits+'</span>';
+            html = html + '</div>';
+            html = html + '</div>';
+            html = html + '</div>';
+            html = html + '</div>';
+            html = html + '</div>';
+            html = html + '</a>';
+        }
+        return html;
+    }
+
+    var timer = null;
+    $(window).scroll(function () {
+        $windHeight = (window.outerHeight > $(window).height()) ? window.outerHeight : $(window).height();
+        if ($(this).scrollTop() + $windHeight +30 >= $(document).height()) {
+            //防止滚动过快，服务端没来得及响应造成多次请求标记 debounce/
+            if (typeof timer === 'number') {
+                clearTimeout(timer);
+            }
+            timer = setTimeout(function () {
+                var page = parseInt($('#pageNum').val()) + 1;
+                listData(page);
+            }, 400);
+        }
+    });
+</script>

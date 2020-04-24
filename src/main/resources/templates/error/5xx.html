@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>5xx</title>
+    <link rel="stylesheet" href="/libs/jquery-weui-1.2.1/css/weui.min.css">
+    <link rel="stylesheet" href="/libs/jquery-weui-1.2.1/css/jquery-weui.min.css">
+    <style>
+        /**由于自定义的css中html的font-size被jquery-weui中的覆盖，导致防止rem不正确，所以重置*/
+        html {
+            font-size: 62.5%
+        }
+    </style>
+</head>
+<body>
+<div class="weui-msg">
+    <div class="weui-msg__icon-area"><i class="weui-icon-warn weui-icon_msg"></i></div>
+    <div class="weui-msg__text-area">
+        <h2 class="weui-msg__title">出错了</h2>
+    </div>
+</div>
+</body>
+<script>
+    function countdown(secs, surl) {
+        var time = document.getElementById("time");
+        time.innerText = secs;//<span>中显示的内容值
+        if (--secs > 0) {
+            setTimeout("countdown(" + secs + ",'" + surl + "')", 1000);//设定超时时间
+        } else {
+            location.href = surl;//跳转页面
+        }
+    }
+
+    //	countdown(3,'index');
+</script>
+</html>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="V10.0.0" author="nmy">
+        <comment>创建成长值表</comment>
+        <createTable tableName="prad_score" remarks="成长值表">
+            <column name="ps_id" type="bigint" autoIncrement="true" remarks="主键">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="ps_user_id" type="bigint" remarks="用户主键"/>
+            <column name="ps_total_score" type="int" remarks="总分数"/>
+            <column name="ps_update_time" type="bigint" remarks="时间"/>
+        </createTable>
+        <comment>创建成长值规则表</comment>
+        <createTable tableName="prad_score_rule" remarks="成长值规则表">
+            <column name="sr_id" type="bigint" autoIncrement="true" remarks="主键">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="sr_number" type="int" remarks="规则编号"/>
+            <column name="sr_name" type="varchar(128)" remarks="规则名称"/>
+            <column name="sr_score" type="int" remarks="奖励分值"/>
+            <column name="sr_create_time" type="bigint" remarks="创建时间"/>
+            <column name="sr_update_time" type="bigint" remarks="修改时间"/>
+            <column name="sr_frequency" type="int" remarks="加分频次 1:只能一次 2:每个业务一次 3:不限次"/>
+        </createTable>
+        <comment>创建成长值记录明细表</comment>
+        <createTable tableName="prad_score_transaction" remarks="成长值记录明细表">
+            <column name="st_id" type="bigint" autoIncrement="true" remarks="主键">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="st_user_id" type="bigint" remarks="用户ID"/>
+            <column name="st_user_name" type="varchar(128)" remarks="用户名"/>
+            <column name="st_rule_id" type="bigint" remarks="规则id"/>
+            <column name="st_score" type="int" remarks="本次加的分数"/>
+            <column name="st_type" type="varchar(128)" remarks="交易类型"/>
+            <column name="st_create_time" type="bigint" remarks="创建时间"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
+

@@ -1,0 +1,48 @@
+#@layout_wechat()
+#define page_title()
+成长值任务
+#end
+#define page_top_url()
+/wechat/userCenter/center
+#end
+
+#define main()
+<body>
+    <div class="posRel">
+        #@page_top2()
+        <div class="growDet-line-box">
+            <div class="growTask-title">
+                <div class="flex-between growDet-lineItem">
+                    <div class="growTit">任务</div>
+                    <div class="grow-score">成长值奖励</div>
+                    <div class="grow-itemDate grow-comTask">做任务</div>
+                </div>
+            </div>
+            <div class="growDet-list">
+                #if(taskList != null && taskList.size()>0)
+                    #for(task:taskList)
+                        <div class="flex-between growDet-lineItem">
+                            <div class="growTit">#(task.srName)</div>
+                            <div class="grow-score">#(task.srScore)</div>
+                            <div class="grow-itemDate">
+                                #if(task.isFinish)
+                                    <button class="completeBtn" disabled style="background-color:#929292;">已完成</button>
+                                #else
+                                    <button class="completeBtn" onclick="window.location.href='/wechat/userCenter/goToTask?type=#(task.srType)'">
+                                        去完成
+                                    </button>
+                                #end
+                            </div>
+                        </div>
+                    #end
+                #end
+            </div>
+        </div>
+    </div>
+</body>
+#end
+
+<script>
+    $(document).ready(function () {
+    });
+</script>

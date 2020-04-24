@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="V9.1.0" author="nmy">
+        <comment>用户表加字段</comment>
+        <addColumn tableName="prad_user">
+            <column name="pu_from" type="varchar(128)" remarks="用户来源"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>
+
