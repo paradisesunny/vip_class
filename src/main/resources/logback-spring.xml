@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <contextName>logback</contextName>
-    <property name="log.path" value="logs/prad.log"/>
+    <property name="log.path" value="logs/vipclass.log"/>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
             <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
@@ -10,9 +10,9 @@
     </appender>
 
     <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/prad.txt</file>
+        <file>logs/vipclass.txt</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/prad-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>logs/vipclass-%d{yyyy-MM-dd}.log</fileNamePattern>
         </rollingPolicy>
         <encoder>
             <pattern>%date %level %logger{36} [%file : %line] %msg%n</pattern>
@@ -22,7 +22,7 @@
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="ROLLING"/>
     </root>
-    <logger name="com.kingyee.prad.common.security.LogInterceptor" level="INFO" additivity="false">
+    <logger name="com.kingyee.vipclass.common.security.LogInterceptor" level="INFO" additivity="false">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="ROLLING"/>
     </logger>
