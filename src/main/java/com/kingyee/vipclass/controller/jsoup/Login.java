@@ -1,28 +1,26 @@
 package com.kingyee.vipclass.controller.jsoup;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.kingyee.vipclass.common.Poxy;
 import com.kingyee.vipclass.common.UtilJsoup;
-
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.RandomAccessFile;
+import java.util.HashMap;
+import java.util.Map;
 
 
-public class Qlk {
+public class Login {
 	/**
 	 * @param args
 	 * @throws Exception
@@ -45,15 +43,13 @@ public class Qlk {
 	 */
 	private static String viewState = null;
 
-	public Qlk() {
+	public Login() {
 		cookies = new HashMap<String,String>();;
 		viewState = "";
 	}
 	
 	public static void main(String[] args) throws Exception {
-		String urlLogin = domain+"member.php?mod=logging&action=login&loginsubmit=yes&frommessage&loginhash=LU3Ob";
-		/*Document doc = UtilJsoup.getHtmlByUrl(url);
-		GetQlk(doc);*/
+		String urlLogin = domain+"member.php?mod=logging&action=login&loginsubmit=yes&loginhash=Lh0Us";
 		Connection connect = Jsoup.connect(urlLogin);
 		// 伪造请求头
 		connect.header("Accept", "application/json, text/javascript, */*; q=0.01").header("Accept-Encoding",
@@ -65,15 +61,14 @@ public class Qlk {
 		connect.header("User-Agent",
 				"Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36")
 				.header("X-Requested-With", "XMLHttpRequest");
-		Map<String, String> map = new HashMap<String, String>();
 
-		map.put("username", "一个胡萝北");
-		map.put("password", "123456");
-		map.put("cookietime", "2592000");
+		Map<String, String> userLoginInfo = new HashMap<>();
+		userLoginInfo.put("username", "一个胡萝北");
+		userLoginInfo.put("password", "123456");
 
 		// 请求url获取响应信息
 		// 执行请求
-		Connection.Response res = connect.ignoreContentType(true).data(map).method(Connection.Method.POST).execute();
+		Connection.Response res = connect.ignoreContentType(true).data(userLoginInfo).method(Connection.Method.POST).execute();
 		// 获取返回的cookie
 		cookies = res.cookies();
 		for (Map.Entry<String, String> entry : cookies.entrySet()) {
@@ -83,23 +78,39 @@ public class Qlk {
 
 		//https://ask.csdn.net/questions/165013
 		Document doc = res.parse();
-		//这儿的SESSIONID需要根据要登录的目标网站设置的session Cookie名字而定
-		String sessionId = res.cookie("_d_id");
-		//在上面的代码成功登录后，就可以利用登录的cookie来保持会话，抓取网页内容了
-		String userCenter = domain+"home.php?mod=space&uid=51073";
+		Element loginTitle = doc.select("title").first();// 标题
+		String title = loginTitle.text();
+		if(StringUtils.isNotEmpty(title) && title.indexOf("提示信息") < 0){
+//这儿的SESSIONID需要根据要登录的目标网站设置的session Cookie名字而定
+			String sessionId = res.cookie("_d_id");
+			//在上面的代码成功登录后，就可以利用登录的cookie来保持会话，抓取网页内容了
+			String userCenter = domain+"home.php?mod=space&uid=51073";
 
-		String huifu = domain+"forum.php?mod=post&infloat=yes&action=reply&fid=86&extra=&tid=10493&replysubmit=yes";
+			String huifu = domain+"forum.php?mod=post&infloat=yes&action=reply&fid=86&extra=&tid=10493&replysubmit=yes";
+			Map<String, String> huifukejian = new HashMap<String, String>();
 
-		Document objectDoc = Jsoup.connect(userCenter)
-				.cookie("_d_id", sessionId)
-				.get();
+			huifukejian.put("formhash", "e9d11853");
+			huifukejian.put("handlekey", "reply");
+			huifukejian.put("noticeauthor", "");
+			huifukejian.put("noticetrimstr", "");
+			huifukejian.put("noticeauthormsg", "");
+			huifukejian.put("usesig", "");
 
-		// 获取响应体
-		String body = res.body();
-		System.out.println();
+			huifukejian.put("message", "学习了！！！");
+			Connection.Response resHuifu = Jsoup.connect(huifu).ignoreContentType(true)
+					.data(huifukejian)
+					.method(Connection.Method.POST).execute()
+					.cookie("_d_id", sessionId);
+			Document docBaidu = resHuifu.parse();
 
-		// 调用下面方法获取__viewstate
-		getViewState(body);// 获取viewState
+			// 获取响应体
+			String body = res.body();
+			System.out.println();
+
+			// 调用下面方法获取__viewstate
+			getViewState(body);// 获取viewState
+		}
+
 	}
 	/**
 	 * 获取viewstate
@@ -515,7 +526,7 @@ public class Qlk {
 	}
 
 	public static void setSfcfStr(String sfcfStr) {
-		Qlk.sfcfStr = sfcfStr;
+		Login.sfcfStr = sfcfStr;
 	}
 
 	public static String getYpUrl() {
@@ -523,11 +534,11 @@ public class Qlk {
 	}
 
 	public static void setYpUrl(String ypUrl) {
-		Qlk.ypUrl = ypUrl;
+		Login.ypUrl = ypUrl;
 	}
 
 	public static void setSfcf(String sfcf) {
-		Qlk.sfcf = sfcf;
+		Login.sfcf = sfcf;
 	}
 
 	public static int getPage() {
@@ -535,7 +546,7 @@ public class Qlk {
 	}
 
 	public static void setPage(int page) {
-		Qlk.page = page;
+		Login.page = page;
 	}
 
 }
