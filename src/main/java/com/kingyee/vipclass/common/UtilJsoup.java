@@ -4,7 +4,6 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import java.sql.Connection;
 
 public class UtilJsoup {
 	public static void main(String[] args) throws Exception {

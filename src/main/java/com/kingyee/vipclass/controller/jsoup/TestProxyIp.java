@@ -3,12 +3,13 @@ package com.kingyee.vipclass.controller.jsoup;
 import java.io.BufferedInputStream;  
 import java.io.IOException;  
 import java.net.URL;  
-import java.net.URLConnection;  
-  
-import org.apache.log4j.Logger;
+import java.net.URLConnection;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TestProxyIp {
-	private static final Logger log = Logger.getLogger(TestProxyIp.class);  
+	private static final Logger log = LoggerFactory.getLogger(TestProxyIp.class);
     
     public static void main(String[] args) throws IOException {  
 //        System.setProperty("http.maxRedirects", "50");  

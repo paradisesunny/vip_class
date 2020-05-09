@@ -1,12 +1,12 @@
 package com.kingyee.vipclass.controller.jsoup;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.chainsaw.Main;
-  
 /** 
  *  
  * ADSL拨号上网 
@@ -16,7 +16,7 @@ import org.apache.log4j.chainsaw.Main;
  */  
   
 public class ConnectAdslNet {  
-    static Logger logger = Logger.getLogger(ConnectAdslNet.class);  
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectAdslNet.class);
       
      /**  
      * 执行CMD命令,并返回String字符串  
@@ -73,8 +73,7 @@ public class ConnectAdslNet {
       
     /** 
      * adsl重新拨号，支持失败不断重拨 
-     * @param args 
-     * @throws Exception 
+     * @throws Exception
      */  
     public static boolean reconnectAdsl(String adslTitle, String adslName, String adslPass){  
         boolean bAdsl = false;  
@@ -94,7 +93,7 @@ public class ConnectAdslNet {
                 }  
             }  
         }catch(Exception e){  
-            logger.error("ADSL拨号异常：", e);  
+            LOGGER.error("ADSL拨号异常：", e);
         }  
           
         return bAdsl;         
@@ -102,7 +101,7 @@ public class ConnectAdslNet {
        
     public static void main(String[] args) throws Exception {  
 //        reconnectAdsl("宽带","adsl账号","密码");   
-    	reconnectAdsl("宽带",Main.PORT_PROP_NAME,Main.PORT_PROP_NAME);
+//    	reconnectAdsl("宽带",Main.PORT_PROP_NAME,Main.PORT_PROP_NAME);
     }     
       
 }  

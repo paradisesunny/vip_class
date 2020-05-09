@@ -4,16 +4,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.kingyee.vipclass.common.Poxy;
 import com.kingyee.vipclass.common.UtilJsoup;
 
-import jxl.Cell;
-import jxl.CellType;
-import jxl.Sheet;
-import jxl.Workbook;
-import jxl.read.biff.BiffException;
-
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -30,6 +27,7 @@ public class Qlk {
 	 * @param args
 	 * @throws Exception
 	 */
+	private final static String domain = "http://www.58dslt.com/";
 
 	private static String ksName;
 	private static String jbName;
@@ -38,10 +36,93 @@ public class Qlk {
 	private static String ypUrl;
 	private static String sfcfStr;
 	private static int page;
+	/**
+	 * 第一次访问获取的cookie(查看发现就返回一个cookie:ASP.NET_SessionId)
+	 */
+	private static  Map<String, String> cookies = null;
+	/**
+	 * __viewstate    教务系统用于验证的信息
+	 */
+	private static String viewState = null;
+
+	public Qlk() {
+		cookies = new HashMap<String,String>();;
+		viewState = "";
+	}
 	
 	public static void main(String[] args) throws Exception {
-		Document doc = UtilJsoup.getHtmlByUrl("http://www.7lk.com/");
-		GetQlk(doc);
+		String urlLogin = domain+"member.php?mod=logging&action=login&loginsubmit=yes";
+		/*Document doc = UtilJsoup.getHtmlByUrl(url);
+		GetQlk(doc);*/
+		Connection connect = Jsoup.connect(urlLogin);
+		// 伪造请求头
+		connect.header("Accept", "application/json, text/javascript, */*; q=0.01").header("Accept-Encoding",
+				"gzip, deflate");
+		connect.header("Accept-Language", "zh-CN,zh;q=0.9").header("Connection", "keep-alive");
+		connect.header("Content-Length", "213").header("Content-Type",
+				"application/x-www-form-urlencoded; charset=UTF-8");
+		connect.header("Host", "www.58dslt.com").header("Referer", urlLogin);
+		connect.header("User-Agent",
+				"Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36")
+				.header("X-Requested-With", "XMLHttpRequest");
+		Map<String, String> loginMap = new HashMap<String, String>();
+//		loginMap.put("username", "小悟空");
+//		loginMap.put("password", "XINGZHE123");
+		loginMap.put("username", "一个胡萝北");
+		loginMap.put("password", "123456");
+
+		// 请求url获取响应信息
+		// 执行请求
+		Connection.Response res = connect.ignoreContentType(true).data(loginMap).method(Connection.Method.POST).execute();
+		// 获取返回的cookie
+		cookies = res.cookies();
+		for (Map.Entry<String, String> entry : cookies.entrySet()) {
+			System.out.println(entry.getKey() + "-" + entry.getValue());
+		}
+
+
+		//https://ask.csdn.net/questions/165013
+		Document doc = res.parse();
+		//这儿的SESSIONID需要根据要登录的目标网站设置的session Cookie名字而定
+		String sessionId = res.cookie("_d_id");
+		//在上面的代码成功登录后，就可以利用登录的cookie来保持会话，抓取网页内容了
+		String userCenter = domain+"home.php?mod=space&uid=51073";
+
+		String huifu = domain+"forum.php?mod=post&infloat=yes&action=reply&fid=86&extra=&tid=10493&replysubmit=yes";
+		Map<String, String> huifukejian = new HashMap<String, String>();
+
+		huifukejian.put("formhash", "e9d11853");
+		huifukejian.put("handlekey", "reply");
+		huifukejian.put("noticeauthor", "");
+		huifukejian.put("noticetrimstr", "");
+		huifukejian.put("noticeauthormsg", "");
+		huifukejian.put("usesig", "");
+
+		huifukejian.put("message", "学习了！！！");
+
+		Document objectDoc = Jsoup.connect(huifu)
+				.cookie("_d_id", sessionId)
+				.get();
+
+		// 获取响应体
+		String body = res.body();
+		System.out.println();
+
+		// 调用下面方法获取__viewstate
+		getViewState(body);// 获取viewState
+	}
+	/**
+	 * 获取viewstate
+	 *
+	 * @return
+	 */
+	public static String getViewState(String htmlContent) {
+		Document document = Jsoup.parse(htmlContent);
+		Element ele = document.select("input[name='__VIEWSTATE']").first();
+		String value = ele.attr("value");
+		// 获取到viewState
+		viewState = value;
+		return value;
 	}
 	
 	/**
@@ -304,26 +385,26 @@ public class Qlk {
 		return flag;
 	}
 	//写入excel
-	public static boolean writeExcel(String content, File fileName) throws IOException, BiffException{
+	/*public static boolean writeExcel(String content, File fileName) throws IOException, BiffException{
 		boolean flag = false;
 		try {
 			File file = new File("D:\\yp.xlsx");
-	
+
 			// if file doesnt exists, then create it
 			if (!file.exists()) {
 				file.createNewFile();
 			}
 	        //通过Workbook的静态方法getWorkbook选取Excel文件
 	        Workbook workbook = Workbook.getWorkbook(file);
-	        
-	 
+
+
 	        //通过Workbook的getSheet方法选择第一个工作簿（从0开始）
 	        Sheet sheet = workbook.getSheet(0);
-	 
+
 	        int rows = sheet.getRows();
 	        int clos = sheet.getColumns();
 	        Cell cells[][] = new Cell[clos][rows];
-	 
+
 	        for(int c=1;c<=clos;++c){
 	            for(int r=0;r<rows;++r){
 	                cells[c][r] = sheet.getCell(c,r);
@@ -357,8 +438,8 @@ public class Qlk {
 			e.printStackTrace();
 		}
         return flag;
-	}
-		
+	}*/
+
 		
 		
 		

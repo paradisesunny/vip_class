@@ -13,6 +13,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.jsoup.Jsoup;
 
 import javax.swing.text.Document;
 
@@ -49,7 +50,7 @@ public class UtilHttpclient {
         	  //取得返回的字符串
     		  String strResult=EntityUtils.toString(httpResponse.getEntity());
     		  if (strResult != null && !"".equals(strResult)) {
-    			  doc = Jsoup.parse(strResult);
+    			  doc = (Document) Jsoup.parse(strResult);
 	  		  }else{
 	  			  throw new Exception();
 	  		  }
@@ -86,7 +87,7 @@ public class UtilHttpclient {
 			HttpResponse response = client.execute(post);
 			String responseStr = EntityUtils.toString(response.getEntity());
 			if (responseStr != null && !"".equals(responseStr)) {
-				doc = Jsoup.parse(responseStr);
+				doc = (Document) Jsoup.parse(responseStr);
 			}else{
 				throw new Exception();
 			}
