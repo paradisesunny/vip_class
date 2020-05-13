@@ -27,6 +27,15 @@ public class IndexController {
         return "web/index";
     }
 
+    @RequestMapping(value = {"/begin"})
+    public String begin(ModelMap mm,String username,String password) {
+        log.info("登录submit");
+        System.out.println(username);
+        System.out.println(password);
+
+        return "web/index";
+    }
+
     /**
      * 模拟扫描带参二维码之后翼多的操作
      *

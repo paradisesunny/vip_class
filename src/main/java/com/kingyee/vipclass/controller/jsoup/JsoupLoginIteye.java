@@ -55,7 +55,7 @@ public class JsoupLoginIteye {
          * 第二次请求，post表单数据，以及cookie信息
          *
          * **/
-        Connection con2=Jsoup.connect("http://www.iteye.com/login");
+        /*Connection con2=Jsoup.connect("http://www.iteye.com/login");
         con2.header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:29.0) Gecko/20100101 Firefox/29.0");
         //设置cookie和post上面的map数据
         Response login=con2.ignoreContentType(true).method(Method.POST).data(datas).cookies(rs.cookies()).execute();
@@ -66,7 +66,7 @@ public class JsoupLoginIteye {
         Map<String, String> map=login.cookies();
         for(String s:map.keySet()){
             System.out.println(s+"      "+map.get(s));
-        }
+        }*/
 
     }
 

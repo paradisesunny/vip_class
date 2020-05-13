@@ -4,13 +4,27 @@
 #define title()
 首页
 #end
-
+<script type="text/javascript" src="js/web/md5.js"></script>
+<script type="text/javascript" src="js/web/common.js"></script>
 
 #define main()
 <body>
 #include("include/head.html")
 #include("include/head_second.html")
 
+<form method="post" autocomplete="off" name="login" id="loginform_LHYRy" class="cl"
+      onsubmit="pwmd5('password3_LHYRy');pwdclear = 1;ajaxpost('loginform_LHYRy', 'returnmessage_LHYRy', 'returnmessage_LHYRy', 'onerror');return false;"
+      action="/begin">
+<!--    action="member.php?mod=logging&amp;action=login&amp;loginsubmit=yes&amp;loginhash=LHYRy"-->
+
+    <label for="username_LHYRy">帐号:</label>
+    <input type="text" name="username" id="username_LHYRy" autocomplete="off" size="30" class="px p_fre" tabindex="1" value="" />
+
+    <label for="password3_LHYRy">密码:</label>
+    <input type="password" id="password3_LHYRy" name="password" size="30" class="px p_fre" tabindex="1" />
+
+    <button class="pn pnc" type="submit" name="loginsubmit" value="true" tabindex="1"><strong>登录</strong></button>
+</form>
 
 #include("include/foot.html")
 </body>

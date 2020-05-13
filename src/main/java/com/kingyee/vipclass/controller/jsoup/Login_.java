@@ -60,7 +60,7 @@ public class Login_ {
 		 * 第二次请求，post表单数据，以及cookie信息
 		 *
 		 * **/
-		String urlLoginSubmit = domain+actionUrl+"&username="+userName+"&password="+pwd;
+		/*String urlLoginSubmit = domain+actionUrl+"&username="+userName+"&password="+pwd;
 		Connection con2=Jsoup.connect(urlLoginSubmit);
 		con2.header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:29.0) Gecko/20100101 Firefox/29.0");
 		//设置cookie和post上面的map数据
@@ -72,7 +72,7 @@ public class Login_ {
 		Map<String, String> map=login.cookies();
 		for(String s:map.keySet()){
 			System.out.println(s+"      "+map.get(s));
-		}
+		}*/
 
 	}
 
